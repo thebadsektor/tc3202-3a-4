@@ -19,6 +19,24 @@ const CategoriesTable = ({ initialCategories }) => {
 
   const handleAddCategory = async () => {
     try {
+      // Validate required field
+      if (!newCategory.trim()) {
+        alert("Please fill in the Category Name");
+        return;
+      }
+
+      // Check for duplicate category name
+      const duplicateCategory = categories.find(
+        (c) =>
+          c.name.toLowerCase() === newCategory.toLowerCase() &&
+          (!editingCategory || c.id !== editingCategory.id)
+      );
+
+      if (duplicateCategory) {
+        alert("Unable to save. Category already exist!");
+        return;
+      }
+
       if (editingCategory) {
         // Update existing category
         const updatedCategory = await updateCategory(

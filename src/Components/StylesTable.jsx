@@ -19,6 +19,24 @@ const StylesTable = ({ initialStyles }) => {
 
   const handleAddStyle = async () => {
     try {
+      // Validate required field
+      if (!newStyle.trim()) {
+        alert("Please fill in the Style Name");
+        return;
+      }
+
+      // Check for duplicate style name
+      const duplicateStyle = styles.find(
+        (s) =>
+          s.name.toLowerCase() === newStyle.toLowerCase() &&
+          (!editingStyle || s.id !== editingStyle.id)
+      );
+
+      if (duplicateStyle) {
+        alert("Unable to save. Style already exist!");
+        return;
+      }
+
       if (editingStyle) {
         // Update existing style
         const updatedStyle = await updateStyle(editingStyle.id, newStyle);

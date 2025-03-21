@@ -39,8 +39,7 @@ const ProductsTab = () => {
             name: "Modern Leather Sofa",
             category: "Living Room",
             style: "Modern",
-            price: 1299.99,
-            stock: 15,
+
             image:
               "https://public.readdy.ai/ai/img_res/6d2e11f8807b642eb490b91f4457bca4.jpg",
           },
@@ -49,8 +48,7 @@ const ProductsTab = () => {
             name: "Dining Table Set",
             category: "Dining Room",
             style: "Minimalist",
-            price: 899.99,
-            stock: 2,
+
             image:
               "https://public.readdy.ai/ai/img_res/e42ecb569c1a2428d5ad1d89e8a32972.jpg",
           },

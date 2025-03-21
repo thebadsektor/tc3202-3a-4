@@ -19,26 +19,66 @@ const ProductsTable = ({ initialProducts, categories, styles }) => {
 
   const handleAddProduct = async () => {
     try {
+      // Validate required fields
+      if (!newProduct.name || !newProduct.category || !newProduct.style) {
+        alert("Please fill in all required fields (Name, Category, and Style)");
+        return;
+      }
+
+      // Check for duplicate product name
+      const duplicateProduct = products.find(
+        (p) =>
+          p.name.toLowerCase() === newProduct.name.toLowerCase() &&
+          (!editingProduct || p.id !== editingProduct.id)
+      );
+
+      // Check for duplicate image if a new image is being uploaded
+      const duplicateImage =
+        newProduct.image &&
+        products.some(
+          (p) =>
+            p.image === newProduct.image &&
+            (!editingProduct || p.id !== editingProduct.id)
+        );
+
+      if (duplicateProduct || duplicateImage) {
+        alert("Unable to save Product. Product Name already exist!");
+        return;
+      }
+
+      // Prepare product data with default values for optional fields
+      const productData = {
+        name: newProduct.name,
+        category: newProduct.category,
+        style: newProduct.style,
+
+        image: newProduct.image || "",
+      };
+
+      let savedProduct;
       if (editingProduct) {
         // Update existing product
-        const updatedProduct = await updateProduct(
-          editingProduct.id,
-          newProduct
-        );
-        setProducts(
-          products.map((p) => (p.id === editingProduct.id ? updatedProduct : p))
-        );
+        savedProduct = await updateProduct(editingProduct.id, productData);
       } else {
         // Create new product
-        const createdProduct = await createProduct(newProduct);
-        setProducts([...products, createdProduct]);
+        savedProduct = await createProduct(productData);
       }
-      setShowProductModal(false);
-      setNewProduct({});
-      setEditingProduct(null);
+
+      if (savedProduct) {
+        if (editingProduct) {
+          setProducts(
+            products.map((p) => (p.id === editingProduct.id ? savedProduct : p))
+          );
+        } else {
+          setProducts([...products, savedProduct]);
+        }
+        setShowProductModal(false);
+        setNewProduct({});
+        setEditingProduct(null);
+      }
     } catch (error) {
       console.error("Error saving product:", error);
-      // You could add error handling UI here if needed
+      alert("Failed to save product. Please check all fields and try again.");
     }
   };
 

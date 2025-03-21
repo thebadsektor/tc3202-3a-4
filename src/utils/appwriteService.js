@@ -1,5 +1,5 @@
 import { ID } from 'appwrite';
-import { databases } from './appwriteConfig';
+import { databases, storage, bucketId } from './appwriteConfig';
 
 // Use environment variables for database and collection IDs
 const DATABASE_ID = import.meta.env.VITE_APPWRITE_DATABASE_ID || '67da95880020fbe64129';
@@ -21,8 +21,7 @@ export const getProducts = async () => {
       name: doc.PRODUCT_NAME, // Map PRODUCT_NAME to name for display
       category: doc.CATEGORY,
       style: doc.STYLE,
-      price: doc.PRICE || 0,
-      stock: doc.STOCK || 0,
+
       image: doc.IMAGE || ''
     }));
   } catch (error) {
@@ -33,15 +32,18 @@ export const getProducts = async () => {
 
 export const createProduct = async (productData) => {
   try {
-    // Map system data to Appwrite format
+    // Validate required fields
+    if (!productData.name || !productData.category || !productData.style) {
+      throw new Error('Missing required fields');
+    }
+
+    // Map system data to Appwrite format and ensure all fields are properly formatted
     const appwriteData = {
-      PRODUCT_NAME: productData.name,
-      CATEGORY: productData.category,
-      STYLE: productData.style,
-      PRICE: productData.price || 0,
-      STOCK: productData.stock || 0,
-      IMAGE: productData.image || ''
-    };
+      PRODUCT_NAME: productData.name.trim(),
+      CATEGORY: productData.category.trim(),
+      STYLE: productData.style.trim(),
+      IMAGE: productData.image ? productData.image.trim() : ''
+    }
 
     const response = await databases.createDocument(
       DATABASE_ID,
@@ -55,8 +57,7 @@ export const createProduct = async (productData) => {
       name: response.PRODUCT_NAME,
       category: response.CATEGORY,
       style: response.STYLE,
-      price: response.PRICE || 0,
-      stock: response.STOCK || 0,
+
       image: response.IMAGE || ''
     };
   } catch (error) {
@@ -67,15 +68,18 @@ export const createProduct = async (productData) => {
 
 export const updateProduct = async (id, productData) => {
   try {
-    // Map system data to Appwrite format
+    // Validate required fields
+    if (!productData.name || !productData.category || !productData.style) {
+      throw new Error('Missing required fields');
+    }
+
+    // Map system data to Appwrite format and ensure all fields are properly formatted
     const appwriteData = {
-      PRODUCT_NAME: productData.name,
-      CATEGORY: productData.category,
-      STYLE: productData.style,
-      PRICE: productData.price || 0,
-      STOCK: productData.stock || 0,
-      IMAGE: productData.image || ''
-    };
+      PRODUCT_NAME: productData.name.trim(),
+      CATEGORY: productData.category.trim(),
+      STYLE: productData.style.trim(),
+      IMAGE: productData.image ? productData.image.trim() : ''
+    }
 
     const response = await databases.updateDocument(
       DATABASE_ID,
@@ -89,8 +93,7 @@ export const updateProduct = async (id, productData) => {
       name: response.PRODUCT_NAME,
       category: response.CATEGORY,
       style: response.STYLE,
-      price: response.PRICE || 0,
-      stock: response.STOCK || 0,
+
       image: response.IMAGE || ''
     };
   } catch (error) {
@@ -101,6 +104,28 @@ export const updateProduct = async (id, productData) => {
 
 export const deleteProduct = async (id) => {
   try {
+    // Get the product first to access its image URL
+    const product = await databases.getDocument(
+      DATABASE_ID,
+      PRODUCTS_COLLECTION_ID,
+      id
+    );
+
+    // If product has an image, delete it from storage
+    if (product.IMAGE) {
+      try {
+        // Extract file ID from the image URL
+        const fileId = product.IMAGE.split('/files/')[1].split('/view')[0];
+        // Delete the image file from storage
+        await storage.deleteFile(bucketId, fileId);
+        console.log('Successfully deleted image file from storage');
+      } catch (deleteError) {
+        console.error('Error deleting image file from storage:', deleteError);
+        // Continue with product deletion even if image deletion fails
+      }
+    }
+
+    // Delete the product document
     await databases.deleteDocument(
       DATABASE_ID,
       PRODUCTS_COLLECTION_ID,

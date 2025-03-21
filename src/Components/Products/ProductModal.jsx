@@ -1,5 +1,7 @@
 import React from "react";
 import Modal from "../shared/Modal";
+import { storage, bucketId } from "../../utils/appwriteConfig";
+import { ID, Query } from "appwrite";
 
 const ProductModal = ({
   showModal,
@@ -25,37 +27,139 @@ const ProductModal = ({
           <input
             type="file"
             accept="image/*"
-            onChange={(e) => {
+            onChange={async (e) => {
               const file = e.target.files?.[0];
               if (file) {
-                const reader = new FileReader();
-                reader.onloadend = () => {
-                  setNewProduct({ ...newProduct, image: reader.result });
-                };
-                reader.readAsDataURL(file);
+                try {
+                  // Check for duplicate filename in storage
+                  const fileList = await storage.listFiles(bucketId);
+                  const isDuplicate = fileList.files.some(
+                    (existingFile) => existingFile.name === file.name
+                  );
+
+                  if (isDuplicate) {
+                    alert(
+                      "A file with this name already exists. Please rename the file before uploading."
+                    );
+                    return;
+                  }
+                  // If there's an existing image, delete it first
+                  if (newProduct.image) {
+                    const oldFileId = newProduct.image
+                      .split("/files/")[1]
+                      .split("/view")[0];
+                    try {
+                      await storage.deleteFile(bucketId, oldFileId);
+                    } catch (deleteError) {
+                      console.error("Error deleting old image:", deleteError);
+                    }
+                  }
+                  const fileId = ID.unique();
+                  const uploadResponse = await storage.createFile(
+                    bucketId,
+                    fileId,
+                    file
+                  );
+                  const fileUrl = `${
+                    import.meta.env.VITE_APPWRITE_ENDPOINT
+                  }/storage/buckets/${bucketId}/files/${fileId}/view?project=${
+                    import.meta.env.VITE_APPWRITE_PROJECT_ID
+                  }`;
+                  setNewProduct({ ...newProduct, image: fileUrl });
+                } catch (error) {
+                  console.error("Error uploading image:", error);
+                  alert("Failed to upload image. Please try again.");
+                }
               }
             }}
             className="hidden"
             id="imageUpload"
           />
-          <label
-            htmlFor="imageUpload"
-            className="w-full px-4 py-2 bg-[#1A1F2A] text-gray-400 rounded-lg border-2 border-dashed border-gray-600 flex items-center justify-center cursor-pointer hover:border-gray-500 transition-colors"
+          <div
+            className="w-full min-h-[200px] px-4 py-6 bg-[#1A1F2A] text-gray-400 rounded-lg border-2 border-dashed border-gray-600 cursor-pointer hover:border-[#4169E1] hover:bg-[#1E2330] transition-all duration-300 relative"
+            onDragOver={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              e.currentTarget.classList.add("border-[#4169E1]");
+            }}
+            onDragLeave={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              e.currentTarget.classList.remove("border-[#4169E1]");
+            }}
+            onDrop={async (e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              e.currentTarget.classList.remove("border-[#4169E1]");
+              const file = e.dataTransfer.files?.[0];
+              if (file && file.type.startsWith("image/")) {
+                try {
+                  // Check for duplicate filename in storage
+                  const fileList = await storage.listFiles(bucketId);
+                  const isDuplicate = fileList.files.some(
+                    (existingFile) => existingFile.name === file.name
+                  );
+
+                  if (isDuplicate) {
+                    alert(
+                      "A file with this name already exists. Please rename the file before uploading."
+                    );
+                    return;
+                  }
+                  // If there's an existing image, delete it first
+                  if (newProduct.image) {
+                    const oldFileId = newProduct.image
+                      .split("/files/")[1]
+                      .split("/view")[0];
+                    try {
+                      await storage.deleteFile(bucketId, oldFileId);
+                    } catch (deleteError) {
+                      console.error("Error deleting old image:", deleteError);
+                    }
+                  }
+                  const fileId = ID.unique();
+                  await storage.createFile(bucketId, fileId, file);
+                  const fileUrl = `${
+                    import.meta.env.VITE_APPWRITE_ENDPOINT
+                  }/storage/buckets/${bucketId}/files/${fileId}/view?project=${
+                    import.meta.env.VITE_APPWRITE_PROJECT_ID
+                  }`;
+                  setNewProduct({ ...newProduct, image: fileUrl });
+                } catch (error) {
+                  console.error("Error uploading image:", error);
+                  alert("Failed to upload image. Please try again.");
+                }
+              } else {
+                alert("Please upload an image file.");
+              }
+            }}
           >
-            <div className="text-center">
-              <i className="fas fa-cloud-upload-alt text-2xl mb-2"></i>
-              <p>Upload Image</p>
-            </div>
-          </label>
-          {newProduct.image && (
-            <div className="mt-2">
-              <img
-                src={newProduct.image}
-                alt="Preview"
-                className="w-20 h-20 rounded-lg object-cover"
-              />
-            </div>
-          )}
+            <label
+              htmlFor="imageUpload"
+              className="flex flex-col items-center justify-center h-full cursor-pointer"
+            >
+              {newProduct.image ? (
+                <div className="relative w-full h-full flex flex-col items-center">
+                  <img
+                    src={newProduct.image}
+                    alt="Preview"
+                    className="w-48 h-48 rounded-lg object-cover mb-2 hover:opacity-90 transition-opacity duration-300"
+                  />
+                  <p className="text-sm text-gray-400">
+                    Click or drag to replace image
+                  </p>
+                </div>
+              ) : (
+                <div className="text-center">
+                  <i className="fas fa-cloud-upload-alt text-4xl mb-4"></i>
+                  <p className="text-lg mb-2">Drag and drop image here</p>
+                  <p className="text-sm text-gray-500">
+                    or click to select file
+                  </p>
+                </div>
+              )}
+            </label>
+          </div>
         </div>
         <input
           type="text"
@@ -105,7 +209,19 @@ const ProductModal = ({
             Cancel
           </button>
           <button
-            onClick={handleAddProduct}
+            onClick={() => {
+              if (
+                !newProduct.name ||
+                !newProduct.category ||
+                !newProduct.style
+              ) {
+                alert(
+                  "Please fill in all required fields (Name, Category, and Style)"
+                );
+                return;
+              }
+              handleAddProduct();
+            }}
             className="px-4 py-2 bg-[#4169E1] text-white !rounded-button cursor-pointer"
           >
             {editingProduct ? "Update" : "Add"}

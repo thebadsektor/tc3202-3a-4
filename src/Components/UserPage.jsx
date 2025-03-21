@@ -72,7 +72,6 @@ const UserPage = () => {
       {
         id: 1,
         name: "Modern Leather Sofa",
-        price: 1299,
         image:
           "https://public.readdy.ai/ai/img_res/2bd31258271307b2fa4c79f1d1e967a0.jpg",
         rating: 4.5,
@@ -81,7 +80,6 @@ const UserPage = () => {
       {
         id: 2,
         name: "Minimalist Coffee Table",
-        price: 499,
         image:
           "https://public.readdy.ai/ai/img_res/f8f90337cceda58c6064346f78770ed5.jpg",
         rating: 4.8,
@@ -90,7 +88,6 @@ const UserPage = () => {
       {
         id: 3,
         name: "Accent Chair",
-        price: 699,
         image:
           "https://public.readdy.ai/ai/img_res/772561a7f8343782d4c1a389189e1e5d.jpg",
         rating: 4.3,
@@ -374,7 +371,7 @@ const UserPage = () => {
                       </p>
                       <div className="flex items-center justify-between">
                         <span className="text-white font-bold">
-                          ${product.price}
+                          
                         </span>
                         <div className="flex items-center">
                           <i className="fas fa-star text-yellow-400 mr-1"></i>
