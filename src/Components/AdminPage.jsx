@@ -7,7 +7,10 @@ import CustomersTab from "./CustomersTab";
 
 const AdminPage = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [activeTab, setActiveTab] = useState("dashboard");
+  const [activeTab, setActiveTab] = useState(() => {
+    // Get saved tab from localStorage or default to dashboard
+    return localStorage.getItem("adminActiveTab") || "dashboard";
+  });
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -51,6 +54,11 @@ const AdminPage = () => {
   const toggleSidebar = () => {
     setIsCollapsed(!isCollapsed);
   };
+
+  // Update localStorage when activeTab changes
+  useEffect(() => {
+    localStorage.setItem("adminActiveTab", activeTab);
+  }, [activeTab]);
 
   const handleLogout = async () => {
     try {
