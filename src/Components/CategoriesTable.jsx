@@ -9,7 +9,7 @@ import {
   deleteCategory,
 } from "../utils/appwriteService";
 
-const CategoriesTable = ({ initialCategories }) => {
+const CategoriesTable = ({ initialCategories, onCategoryUpdate }) => {
   const [categories, setCategories] = useState(initialCategories);
   const [showCategoryModal, setShowCategoryModal] = useState(false);
   const [editingCategory, setEditingCategory] = useState(null);
@@ -56,6 +56,11 @@ const CategoriesTable = ({ initialCategories }) => {
       setShowCategoryModal(false);
       setNewCategory("");
       setEditingCategory(null);
+
+      // Notify parent component about the category update
+      if (onCategoryUpdate) {
+        onCategoryUpdate();
+      }
     } catch (error) {
       console.error("Error saving category:", error);
       // You could add error handling UI here if needed
@@ -73,6 +78,11 @@ const CategoriesTable = ({ initialCategories }) => {
       setCategories(categories.filter((c) => c.id !== categoryToDelete.id));
       setShowDeleteConfirm(false);
       setCategoryToDelete(null);
+
+      // Notify parent component about the category update
+      if (onCategoryUpdate) {
+        onCategoryUpdate();
+      }
     } catch (error) {
       console.error("Error deleting category:", error);
       // You could add error handling UI here if needed

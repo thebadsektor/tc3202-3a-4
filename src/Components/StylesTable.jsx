@@ -9,7 +9,7 @@ import {
   deleteStyle,
 } from "../utils/appwriteService";
 
-const StylesTable = ({ initialStyles }) => {
+const StylesTable = ({ initialStyles, onStyleUpdate }) => {
   const [styles, setStyles] = useState(initialStyles);
   const [showStyleModal, setShowStyleModal] = useState(false);
   const [editingStyle, setEditingStyle] = useState(null);
@@ -51,6 +51,11 @@ const StylesTable = ({ initialStyles }) => {
       setShowStyleModal(false);
       setNewStyle("");
       setEditingStyle(null);
+
+      // Notify parent component about the style update
+      if (onStyleUpdate) {
+        onStyleUpdate();
+      }
     } catch (error) {
       console.error("Error saving style:", error);
       // You could add error handling UI here if needed
@@ -68,6 +73,11 @@ const StylesTable = ({ initialStyles }) => {
       setStyles(styles.filter((s) => s.id !== styleToDelete.id));
       setShowDeleteConfirm(false);
       setStyleToDelete(null);
+
+      // Notify parent component about the style update
+      if (onStyleUpdate) {
+        onStyleUpdate();
+      }
     } catch (error) {
       console.error("Error deleting style:", error);
       // You could add error handling UI here if needed

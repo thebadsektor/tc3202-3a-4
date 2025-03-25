@@ -1,4 +1,4 @@
-import { ID } from 'appwrite';
+import { ID, Query } from 'appwrite';
 import { databases, storage, bucketId } from './appwriteConfig';
 
 // Use environment variables for database and collection IDs
@@ -12,7 +12,8 @@ export const getProducts = async () => {
   try {
     const response = await databases.listDocuments(
       DATABASE_ID,
-      PRODUCTS_COLLECTION_ID
+      PRODUCTS_COLLECTION_ID,
+      [Query.limit(100)] // Increase limit to retrieve more products
     );
     
     // Map Appwrite data to match the system's format
@@ -143,9 +144,9 @@ export const getCategories = async () => {
   try {
     const response = await databases.listDocuments(
       DATABASE_ID,
-      CATEGORIES_COLLECTION_ID
-    );
-    
+      CATEGORIES_COLLECTION_ID,
+      [Query.limit(100)] // Increase limit to retrieve more categories
+    )
     return response.documents.map(doc => ({
       id: doc.$id,
       name: doc.NAME
@@ -213,8 +214,9 @@ export const getStyles = async () => {
   try {
     const response = await databases.listDocuments(
       DATABASE_ID,
-      STYLES_COLLECTION_ID
-    );
+      STYLES_COLLECTION_ID,
+      [Query.limit(100)] // Increase limit to retrieve more styles
+    )
     
     return response.documents.map(doc => ({
       id: doc.$id,

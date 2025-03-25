@@ -10,6 +10,7 @@ import AdminPage from "./Components/AdminPage";
 import LoginPage from "./Components/LoginPage";
 import SignUpPage from "./Components/SignUpPage";
 import ForgotPassPage from "./Components/ForgotPassPage";
+import ResetPasswordPage from "./Components/ResetPasswordPage";
 import { supabase } from "./utils/supabaseClient";
 
 // Protected Route Component
@@ -73,6 +74,7 @@ function App() {
         <Route path="/" element={<LoginPage />} />
         <Route path="/signup" element={<SignUpPage />} />
         <Route path="/forgot-password" element={<ForgotPassPage />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
 
         {/* Protected routes */}
         <Route

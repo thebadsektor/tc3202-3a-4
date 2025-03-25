@@ -89,6 +89,25 @@ const ProductsTab = () => {
     );
   }
 
+  // Functions to update state when categories or styles change
+  const updateCategories = async () => {
+    try {
+      const categoriesData = await getCategories();
+      setCategories(categoriesData);
+    } catch (err) {
+      console.error("Error updating categories:", err);
+    }
+  };
+
+  const updateStyles = async () => {
+    try {
+      const stylesData = await getStyles();
+      setStyles(stylesData);
+    } catch (err) {
+      console.error("Error updating styles:", err);
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Products Table Component */}
@@ -99,10 +118,13 @@ const ProductsTab = () => {
       />
 
       {/* Categories Table Component */}
-      <CategoriesTable initialCategories={categories} />
+      <CategoriesTable
+        initialCategories={categories}
+        onCategoryUpdate={updateCategories}
+      />
 
       {/* Styles Table Component */}
-      <StylesTable initialStyles={styles} />
+      <StylesTable initialStyles={styles} onStyleUpdate={updateStyles} />
     </div>
   );
 };

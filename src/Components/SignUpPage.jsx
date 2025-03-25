@@ -22,8 +22,15 @@ const SignUpPage = () => {
       setErrorMsg("Passwords do not match");
       return;
     }
-    if (password.length < 6) {
-      setErrorMsg("Password must be at least 6 characters");
+    if (
+      password.length < 8 ||
+      !/[A-Z]/.test(password) ||
+      !/[a-z]/.test(password) ||
+      !/[0-9]/.test(password)
+    ) {
+      setErrorMsg(
+        "Password must have at least 8 characters, an uppercase letter, a lowercase letter, and a number"
+      );
       return;
     }
 
