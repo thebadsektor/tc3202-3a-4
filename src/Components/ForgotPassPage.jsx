@@ -45,9 +45,9 @@ const ForgotPassPage = () => {
       <div className="w-full max-w-md bg-[#232936] rounded-lg shadow-xl p-8">
         <div className="text-center mb-8">
           <img
-            src="https://public.readdy.ai/ai/img_res/e6b2ac1ef790d583a30d00c72a2a0417.jpg"
+            src="/intellcor.png"
             alt="Logo"
-            className="mx-auto h-16 w-auto mb-4"
+            className="mx-auto h-25 w-auto mb-4"
           />
           <h1 className="text-2xl font-bold text-white">Reset Your Password</h1>
           <p className="text-gray-400 mt-2">

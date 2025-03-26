@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "../utils/supabaseClient";
 import DashboardTab from "./DashboardTab";
 import ProductsTab from "./ProductsTab";
-import CustomersTab from "./CustomersTab";
+import UsersTab from "./UsersTab";
 
 const AdminPage = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -76,8 +76,8 @@ const AdminPage = () => {
         return <DashboardTab />;
       case "products":
         return <ProductsTab />;
-      case "customers":
-        return <CustomersTab />;
+      case "users":
+        return <UsersTab />;
       default:
         return <DashboardTab />;
     }
@@ -100,16 +100,17 @@ const AdminPage = () => {
         <aside
           className={`${
             isCollapsed ? "w-20" : "w-60"
-          } transition-all duration-300 bg-[#1E293B] min-h-screen p-4 fixed`}
+          } transition-all duration-300 bg-[#1E293B] min-h-screen py-4 pr-4 pl-1 fixed`}
         >
           <div
-            className="flex items-center mb-8 cursor-pointer"
+            className="flex items-center mb-8 cursor-pointer pl-1"
             onClick={toggleSidebar}
           >
             <img
-              src="https://public.readdy.ai/ai/img_res/697f96c973b54edd47c59d17339191b5.jpg"
+              src="/intellcor.png"
               alt="Logo"
-              className="w-10 h-10"
+              className="w-15 h-15"
+              style={{ minWidth: "60px", minHeight: "60px" }}
             />
             <span
               className={`ml-3 text-lg font-semibold ${
@@ -122,7 +123,9 @@ const AdminPage = () => {
           <nav className="flex flex-col h-[calc(100vh-80px)] justify-between">
             <div className="space-y-2">
               <button
-                className={`flex items-center space-x-3 w-full px-4 py-3 rounded-lg cursor-pointer ${
+                className={`flex items-center ${
+                  isCollapsed ? "justify-center" : "space-x-3"
+                } w-full px-4 py-3 rounded-lg cursor-pointer ${
                   activeTab === "dashboard"
                     ? "bg-blue-600 text-white"
                     : "text-gray-400 hover:bg-[#2D3B4F]"
@@ -135,7 +138,9 @@ const AdminPage = () => {
                 </span>
               </button>
               <button
-                className={`flex items-center space-x-3 w-full px-4 py-3 rounded-lg cursor-pointer ${
+                className={`flex items-center ${
+                  isCollapsed ? "justify-center" : "space-x-3"
+                } w-full px-4 py-3 rounded-lg cursor-pointer ${
                   activeTab === "products"
                     ? "bg-blue-600 text-white"
                     : "text-gray-400 hover:bg-[#2D3B4F]"
@@ -148,12 +153,14 @@ const AdminPage = () => {
                 </span>
               </button>
               <button
-                className={`flex items-center space-x-3 w-full px-4 py-3 rounded-lg cursor-pointer ${
-                  activeTab === "customers"
+                className={`flex items-center ${
+                  isCollapsed ? "justify-center" : "space-x-3"
+                } w-full px-4 py-3 rounded-lg cursor-pointer ${
+                  activeTab === "users"
                     ? "bg-blue-600 text-white"
                     : "text-gray-400 hover:bg-[#2D3B4F]"
                 }`}
-                onClick={() => setActiveTab("customers")}
+                onClick={() => setActiveTab("users")}
               >
                 <i className="fas fa-users"></i>
                 <span className={`${isCollapsed ? "hidden" : "block"}`}>
@@ -163,7 +170,9 @@ const AdminPage = () => {
             </div>
             <div className="mb-8">
               <button
-                className="flex items-center space-x-3 w-full px-4 py-3 text-red-400 hover:bg-red-500 hover:text-white rounded-lg transition-colors duration-200 cursor-pointer"
+                className={`flex items-center ${
+                  isCollapsed ? "justify-center" : "space-x-3"
+                } w-full px-4 py-3 text-red-400 hover:bg-red-500 hover:text-white rounded-lg transition-colors duration-200 cursor-pointer`}
                 onClick={handleLogout}
               >
                 <i className="fas fa-sign-out-alt"></i>
@@ -194,9 +203,6 @@ const AdminPage = () => {
               </h1>
             </div>
             <div className="flex items-center space-x-4">
-              <button className="p-2 text-gray-400 hover:text-white">
-                <i className="fas fa-bell"></i>
-              </button>
               <div className="flex items-center space-x-3">
                 <img
                   src="https://public.readdy.ai/ai/img_res/dbc65b1baf35e9b494a1a4961b124427.jpg"

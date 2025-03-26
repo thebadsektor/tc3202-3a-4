@@ -139,11 +139,7 @@ const UserPage = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center">
-              <img
-                src="https://public.readdy.ai/ai/img_res/6f3452425bfb34a5d51dd25cf3986d9c.jpg"
-                alt="Company Logo"
-                className="h-8"
-              />
+              <img src="/intellcor.png" alt="Company Logo" className="h-15" />
             </div>
             <div className="flex items-center relative">
               <div

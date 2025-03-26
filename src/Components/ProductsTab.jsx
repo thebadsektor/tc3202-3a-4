@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import ProductsTable from "./ProductsTable";
 import CategoriesTable from "./CategoriesTable";
 import StylesTable from "./StylesTable";
+import SkeletonLoading from "./shared/SkeletonLoading";
 import {
   getProducts,
   getCategories,
@@ -74,11 +75,7 @@ const ProductsTab = () => {
   }, []);
 
   if (loading) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <div className="text-white">Loading data...</div>
-      </div>
-    );
+    return <SkeletonLoading />;
   }
 
   if (error) {
