@@ -60,7 +60,25 @@ const LoginPage = () => {
         localStorage.setItem("sb-auth-token", data.session?.access_token);
       }
 
-      // Redirect based on role selection
+      // Check if selected role matches user's actual role
+      if (role === "admin" && userRole !== "admin") {
+        // User is trying to access admin but doesn't have admin role
+        setErrorMsg(
+          "Access Denied: You are not authorized to access this role."
+        );
+        return;
+      }
+
+      // Check if admin user is trying to access user page
+      if (role === "user" && userRole === "admin") {
+        // Admin user is trying to access user page
+        setErrorMsg(
+          "Access Denied: You are not authorized to access this role."
+        );
+        return;
+      }
+
+      // Redirect based on role selection (only if authorized)
       navigate(role === "admin" ? "/admin" : "/user");
     } catch (error) {
       console.error("Error logging in:", error.message);

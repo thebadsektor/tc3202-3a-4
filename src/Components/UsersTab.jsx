@@ -1,12 +1,11 @@
 import React from "react";
+import UsersTable from "./UsersTable";
+import SkeletonLoading from "./shared/SkeletonLoading";
 
 const UsersTab = () => {
   return (
-    <div className="p-4">
-      <h2 className="text-xl font-semibold mb-6">User Management</h2>
-      <div className="bg-[#1E293B] p-6 rounded-xl">
-        <p className="text-gray-400">Users content will be displayed here.</p>
-      </div>
+    <div className="space-y-6">
+      <UsersTable />
     </div>
   );
 };
