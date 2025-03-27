@@ -39,7 +39,17 @@ CREATE POLICY "Users can update their own profiles"
 ON profiles FOR UPDATE 
 USING (auth.uid() = id);
 
--- Allow authenticated users to insert their own profile
-CREATE POLICY "Users can insert their own profiles" 
+-- Allow authenticated users to insert profiles
+CREATE POLICY "Users can insert profiles" 
 ON profiles FOR INSERT 
-WITH CHECK (auth.uid() = id);
+WITH CHECK (auth.role() = 'authenticated');
+
+-- Allow authenticated users to delete profiles since UI restricts this to admin only
+DROP POLICY IF EXISTS "Authenticated users can delete profiles" ON profiles;
+CREATE POLICY "Authenticated users can delete profiles"
+ON profiles FOR DELETE 
+USING (auth.role() = 'authenticated');
+
+-- Grant necessary permissions
+GRANT DELETE ON profiles TO authenticated;
+GRANT USAGE ON SCHEMA auth TO authenticated;

@@ -117,7 +117,7 @@ const AdminPage = () => {
                 isCollapsed ? "hidden" : "block"
               }`}
             >
-              IntellCor
+              Admin Panel
             </span>
           </div>
           <nav className="flex flex-col h-[calc(100vh-80px)] justify-between">

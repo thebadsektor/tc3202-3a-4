@@ -5,6 +5,7 @@ import UserModal from "./Users/UserModal";
 import Modal from "./shared/Modal";
 import SkeletonLoading from "./shared/SkeletonLoading";
 import { supabase } from "../utils/supabaseClient";
+import { RealtimeChannel } from "@supabase/supabase-js";
 
 const UsersTable = () => {
   const [users, setUsers] = useState([]);
@@ -20,6 +21,51 @@ const UsersTable = () => {
 
   useEffect(() => {
     fetchUsers();
+
+    // Subscribe to real-time changes
+    const channel = supabase
+      .channel("profiles_changes")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "profiles" },
+        (payload) => {
+          console.log("Real-time update:", payload);
+          switch (payload.eventType) {
+            case "INSERT":
+              setUsers((prev) => [...prev, payload.new]);
+              setFilteredUsers((prev) => [...prev, payload.new]);
+              break;
+            case "UPDATE":
+              setUsers((prev) =>
+                prev.map((user) =>
+                  user.id === payload.new.id ? payload.new : user
+                )
+              );
+              setFilteredUsers((prev) =>
+                prev.map((user) =>
+                  user.id === payload.new.id ? payload.new : user
+                )
+              );
+              break;
+            case "DELETE":
+              setUsers((prev) =>
+                prev.filter((user) => user.id !== payload.old.id)
+              );
+              setFilteredUsers((prev) =>
+                prev.filter((user) => user.id !== payload.old.id)
+              );
+              break;
+            default:
+              break;
+          }
+        }
+      )
+      .subscribe();
+
+    // Cleanup subscription on component unmount
+    return () => {
+      channel.unsubscribe();
+    };
   }, []);
 
   const fetchUsers = async () => {
@@ -70,22 +116,31 @@ const UsersTable = () => {
 
   const handleAddUser = async () => {
     try {
-      // Validate required fields
-      if (!newUser.email || !newUser.role) {
-        alert("Please fill in all required fields");
-        return;
-      }
-
       // Check for duplicate email
       const duplicateUser = users.find(
-        (u) =>
-          u.email.toLowerCase() === newUser.email.toLowerCase() &&
-          (!editingUser || u.id !== editingUser.id)
+        (u) => u.email.toLowerCase() === newUser.email.toLowerCase()
       );
 
       if (duplicateUser) {
-        alert("Unable to save User. Email already exists!");
-        return;
+        // If editing user or the duplicate user has a different role, update the role
+        if (editingUser || duplicateUser.role !== newUser.role) {
+          const { data, error } = await supabase
+            .from("profiles")
+            .update({ role: newUser.role })
+            .eq("id", duplicateUser.id)
+            .select();
+
+          if (error) throw error;
+
+          setUsers(users.map((u) => (u.id === duplicateUser.id ? data[0] : u)));
+          setShowUserModal(false);
+          setNewUser({});
+          setEditingUser(null);
+          return;
+        } else {
+          alert("Unable to save User. Email already exists!");
+          return;
+        }
       }
 
       let savedUser;
@@ -107,21 +162,26 @@ const UsersTable = () => {
           role: newUser.role,
         };
       } else {
-        // Generate a random password for the user
-        const randomPassword =
-          Math.random().toString(36).slice(-10) +
-          Math.random().toString(36).toUpperCase().slice(-2) +
-          Math.random().toString(21).slice(-2);
-
-        // First create auth user with the random password
+        // Use the password provided in the form
+        // First create auth user with the provided password
         const { data: authData, error: authError } = await supabase.auth.signUp(
           {
             email: newUser.email,
-            password: randomPassword,
+            password: newUser.password,
+            options: {
+              data: {
+                role: newUser.role, // Store role in user metadata
+              },
+            },
           }
         );
 
-        if (authError) throw authError;
+        if (authError) {
+          if (authError.message.includes("User already registered")) {
+            throw new Error("This email is already registered");
+          }
+          throw authError;
+        }
 
         if (authData && authData.user) {
           // Then create profile entry
@@ -136,13 +196,22 @@ const UsersTable = () => {
             ])
             .select();
 
-          if (error) throw error;
+          if (error) {
+            // If profile creation fails, we should still consider this a success
+            // as the auth user was created and confirmation email sent
+            console.warn("Profile creation error:", error);
+          }
 
-          savedUser = data[0] || {
+          savedUser = data?.[0] || {
             id: authData.user.id,
             email: newUser.email,
             role: newUser.role,
           };
+
+          // Show success message about confirmation email
+          alert(
+            "User created successfully! Please check email for confirmation link."
+          );
         } else {
           throw new Error("Failed to create user");
         }
@@ -171,23 +240,35 @@ const UsersTable = () => {
 
   const confirmDelete = async () => {
     try {
-      // Delete from profiles table first
-      const { error: profileError } = await supabase
+      // First check if current user is admin
+      const { data: currentProfile } = await supabase
         .from("profiles")
-        .delete()
-        .eq("id", userToDelete.id);
+        .select("role")
+        .eq("id", (await supabase.auth.getUser()).data.user.id)
+        .single();
 
-      if (profileError) throw profileError;
+      if (!currentProfile || currentProfile.role !== "admin") {
+        throw new Error("Only admin users can delete users");
+      }
 
-      // Note: We can't delete from auth without admin privileges,
-      // so we'll just remove from our profiles table
+      // Delete the auth user using RPC function
+      const { error: authError } = await supabase.rpc("delete_user", {
+        user_id: userToDelete.id,
+      });
 
+      if (authError) {
+        console.error("Auth deletion error:", authError);
+        throw authError;
+      }
+
+      // Update local state after successful deletion
       setUsers(users.filter((u) => u.id !== userToDelete.id));
+      setFilteredUsers(filteredUsers.filter((u) => u.id !== userToDelete.id));
       setShowDeleteConfirm(false);
       setUserToDelete(null);
     } catch (error) {
       console.error("Error deleting user:", error);
-      alert("Failed to delete user. Please try again.");
+      alert(error.message || "Failed to delete user. Please try again.");
     }
   };
 
@@ -268,7 +349,7 @@ const UsersTable = () => {
           }}
         >
           <table className="w-full">
-            <TableHeader columns={["Email", "Role", "Edit", "Delete"]} />
+            <TableHeader columns={["Email", "Role", "Delete"]} />
             <tbody>
               {filteredUsers.length > 0 ? (
                 filteredUsers.map((user) => (
@@ -318,13 +399,13 @@ const UsersTable = () => {
           <div className="flex justify-end space-x-3">
             <button
               onClick={() => setShowDeleteConfirm(false)}
-              className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+              className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors cursor-pointer"
             >
               Cancel
             </button>
             <button
               onClick={confirmDelete}
-              className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+              className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors cursor-pointer"
             >
               Delete
             </button>
