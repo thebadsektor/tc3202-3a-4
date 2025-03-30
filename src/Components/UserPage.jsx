@@ -5,6 +5,11 @@ import * as echarts from "echarts";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination, Autoplay } from "swiper/modules";
 import { supabase } from "../utils/supabaseClient";
+import {
+  getProducts,
+  getCategories,
+  getStyles,
+} from "../utils/appwriteService";
 import "swiper/css";
 import "swiper/css/pagination";
 
@@ -20,9 +25,33 @@ const UserPage = () => {
   const [recommendations, setRecommendations] = useState([]);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [styles, setStyles] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [flooringProducts, setFlooringProducts] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Fetch styles, categories and flooring products
+    const fetchData = async () => {
+      try {
+        const stylesData = await getStyles();
+        const categoriesData = await getCategories();
+        const productsData = await getProducts();
+
+        setStyles(stylesData);
+        setCategories(
+          categoriesData.filter((category) => category.name !== "Flooring")
+        );
+        setFlooringProducts(
+          productsData.filter((product) => product.category === "Flooring")
+        );
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+
     // Check if the user is logged in
     const checkAuth = async () => {
       try {
@@ -215,10 +244,11 @@ const UserPage = () => {
                       className="w-full px-4 py-2 bg-gray-700 text-white border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none"
                     >
                       <option value="">Select style</option>
-                      <option value="Minimalist">Minimalist</option>
-                      <option value="Modern">Modern</option>
-                      <option value="Traditional">Traditional</option>
-                      <option value="Industrial">Industrial</option>
+                      {styles.map((style) => (
+                        <option key={style.id} value={style.name}>
+                          {style.name}
+                        </option>
+                      ))}
                     </select>
                     <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
                       <i className="fas fa-chevron-down text-gray-400"></i>
@@ -236,10 +266,11 @@ const UserPage = () => {
                       className="w-full px-4 py-2 bg-gray-700 text-white border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none"
                     >
                       <option value="">Select room</option>
-                      <option value="Living Room">Living Room</option>
-                      <option value="Bedroom">Bedroom</option>
-                      <option value="Kitchen">Kitchen</option>
-                      <option value="Office">Office</option>
+                      {categories.map((category) => (
+                        <option key={category.id} value={category.name}>
+                          {category.name}
+                        </option>
+                      ))}
                     </select>
                     <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
                       <i className="fas fa-chevron-down text-gray-400"></i>
@@ -299,10 +330,11 @@ const UserPage = () => {
                       className="w-full px-4 py-2 bg-gray-700 text-white border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none"
                     >
                       <option value="">Select flooring</option>
-                      <option value="Hardwood">Hardwood</option>
-                      <option value="Carpet">Carpet</option>
-                      <option value="Tile">Tile</option>
-                      <option value="Laminate">Laminate</option>
+                      {flooringProducts.map((product) => (
+                        <option key={product.id} value={product.name}>
+                          {product.name}
+                        </option>
+                      ))}
                     </select>
                     <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
                       <i className="fas fa-chevron-down text-gray-400"></i>
