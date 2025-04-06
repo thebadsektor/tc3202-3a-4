@@ -96,36 +96,33 @@ const UserPage = () => {
 
   const generateRecommendations = async () => {
     setIsGenerating(true);
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    const newRecommendations = [
-      {
-        id: 1,
-        name: "Modern Leather Sofa",
-        image:
-          "https://public.readdy.ai/ai/img_res/2bd31258271307b2fa4c79f1d1e967a0.jpg",
-        rating: 4.5,
-        description: "Contemporary design with premium leather upholstery",
-      },
-      {
-        id: 2,
-        name: "Minimalist Coffee Table",
-        image:
-          "https://public.readdy.ai/ai/img_res/f8f90337cceda58c6064346f78770ed5.jpg",
-        rating: 4.8,
-        description: "Sleek wooden top with metal frame",
-      },
-      {
-        id: 3,
-        name: "Accent Chair",
-        image:
-          "https://public.readdy.ai/ai/img_res/772561a7f8343782d4c1a389189e1e5d.jpg",
-        rating: 4.3,
-        description: "Ergonomic design with premium fabric",
-      },
-    ];
-    setRecommendations(newRecommendations);
-    setIsGenerating(false);
-    showNotification("New recommendations generated!");
+    
+    try {
+      const response = await fetch('http://localhost:8000/api/recommendations', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          room: selectedRoom,
+          style: selectedStyle,
+          flooring: selectedFlooring
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch recommendations');
+      }
+      
+      const data = await response.json();
+      setRecommendations(data.products);
+      showNotification("New recommendations generated!");
+    } catch (error) {
+      console.error('Error fetching recommendations:', error);
+      showNotification("Failed to generate recommendations. Please try again.");
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   const questions = [
@@ -388,7 +385,7 @@ const UserPage = () => {
                     <img
                       src={product.image}
                       alt={product.name}
-                      className="w-full h-48 object-cover"
+                      className="w-full h-48 object-contain bg-white"
                     />
                     <div className="p-4">
                       <h4 className="text-lg font-semibold text-white mb-2">
