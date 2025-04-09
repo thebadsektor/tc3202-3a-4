@@ -22,12 +22,21 @@ const UserPage = () => {
   const [selectedRoom, setSelectedRoom] = useState("");
   const [roomSize, setRoomSize] = useState("");
   const [selectedFlooring, setSelectedFlooring] = useState("");
+  const [validationErrors, setValidationErrors] = useState({
+    style: false,
+    room: false,
+    roomSize: false,
+    flooring: false,
+    floorPlan: false
+  });
   const [recommendations, setRecommendations] = useState([]);
   const [user, setUser] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [styles, setStyles] = useState([]);
   const [categories, setCategories] = useState([]);
   const [flooringProducts, setFlooringProducts] = useState([]);
+  const recommendationsRef = React.useRef(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -84,6 +93,10 @@ const UserPage = () => {
     setTimeout(() => setShowToast(false), 3000);
   };
 
+  const getToastBackgroundColor = (message) => {
+    return message === "Please fill in all required fields" ? "bg-red-500" : "bg-green-500";
+  };
+
   const handleLogout = async () => {
     try {
       await supabase.auth.signOut();
@@ -95,6 +108,23 @@ const UserPage = () => {
   };
 
   const generateRecommendations = async () => {
+    // Check for empty fields
+    const errors = {
+      style: !selectedStyle,
+      room: !selectedRoom,
+      roomSize: !roomSize,
+      flooring: !selectedFlooring,
+      floorPlan: !selectedFile
+    };
+
+    setValidationErrors(errors);
+
+    // If any field is empty, show error message and return
+    if (Object.values(errors).some(error => error)) {
+      showNotification("Please fill in all required fields");
+      return;
+    }
+
     setIsGenerating(true);
     
     try {
@@ -117,6 +147,13 @@ const UserPage = () => {
       const data = await response.json();
       setRecommendations(data.products);
       showNotification("New recommendations generated!");
+      
+      // Scroll to recommendations section after they're loaded
+      setTimeout(() => {
+        if (recommendationsRef.current) {
+          recommendationsRef.current.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 100);
     } catch (error) {
       console.error('Error fetching recommendations:', error);
       showNotification("Failed to generate recommendations. Please try again.");
@@ -217,7 +254,9 @@ const UserPage = () => {
                 Experience the future of interior design with our AI-powered
                 room design assistant. Create your perfect space in minutes.
               </p>
-              <button className="bg-blue-500 hover:bg-blue-600 px-8 py-3 text-white rounded-lg font-medium transition-colors !rounded-button whitespace-nowrap cursor-pointer">
+              <button className="bg-blue-500 hover:bg-blue-600 px-8 py-3 text-white rounded-lg font-medium transition-colors !rounded-button whitespace-nowrap cursor-pointer" onClick={() => {
+                document.querySelector('.bg-gray-800.rounded-lg.shadow-xl').scrollIntoView({ behavior: 'smooth' });
+              }}>
                 Get Started
               </button>
             </div>
@@ -237,8 +276,11 @@ const UserPage = () => {
                   <div className="relative">
                     <select
                       value={selectedStyle}
-                      onChange={(e) => setSelectedStyle(e.target.value)}
-                      className="w-full px-4 py-2 bg-gray-700 text-white border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none"
+                      onChange={(e) => {
+                        setSelectedStyle(e.target.value);
+                        setValidationErrors(prev => ({ ...prev, style: false }));
+                      }}
+                      className={`w-full px-4 py-2 bg-gray-700 text-white border ${validationErrors.style ? 'border-red-500' : 'border-gray-600'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none`}
                     >
                       <option value="">Select style</option>
                       {styles.map((style) => (
@@ -259,8 +301,11 @@ const UserPage = () => {
                   <div className="relative">
                     <select
                       value={selectedRoom}
-                      onChange={(e) => setSelectedRoom(e.target.value)}
-                      className="w-full px-4 py-2 bg-gray-700 text-white border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none"
+                      onChange={(e) => {
+                        setSelectedRoom(e.target.value);
+                        setValidationErrors(prev => ({ ...prev, room: false }));
+                      }}
+                      className={`w-full px-4 py-2 bg-gray-700 text-white border ${validationErrors.room ? 'border-red-500' : 'border-gray-600'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none`}
                     >
                       <option value="">Select room</option>
                       {categories.map((category) => (
@@ -281,40 +326,13 @@ const UserPage = () => {
                   <input
                     type="number"
                     value={roomSize}
-                    onChange={(e) => setRoomSize(e.target.value)}
-                    className="w-full px-4 py-2 bg-gray-700 text-white border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    onChange={(e) => {
+                      setRoomSize(e.target.value);
+                      setValidationErrors(prev => ({ ...prev, roomSize: false }));
+                    }}
+                    className={`w-full px-4 py-2 bg-gray-700 text-white border ${validationErrors.roomSize ? 'border-red-500' : 'border-gray-600'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
                     placeholder="Enter room size"
                   />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-200 mb-2">
-                    Upload Floor Plan
-                  </label>
-                  <div className="relative">
-                    <input
-                      type="file"
-                      accept=".jpg,.jpeg,.png"
-                      className="hidden"
-                      id="floorPlan"
-                      onChange={(e) => {
-                        if (e.target.files && e.target.files[0]) {
-                          showNotification("Floor plan uploaded successfully!");
-                        }
-                      }}
-                    />
-                    <label
-                      htmlFor="floorPlan"
-                      className="w-full flex items-center justify-center px-4 py-2 bg-gray-700 text-white border border-gray-600 rounded-lg hover:bg-gray-600 transition-colors duration-200 cursor-pointer group"
-                    >
-                      <i className="fas fa-cloud-upload-alt mr-2 text-gray-400 group-hover:text-white"></i>
-                      <span className="text-gray-400 group-hover:text-white">
-                        Choose file or drag and drop
-                      </span>
-                    </label>
-                    <div className="mt-2 text-sm text-gray-400">
-                      Supported formats: JPG, PNG (Max size: 5MB)
-                    </div>
-                  </div>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-200 mb-2">
@@ -323,8 +341,11 @@ const UserPage = () => {
                   <div className="relative">
                     <select
                       value={selectedFlooring}
-                      onChange={(e) => setSelectedFlooring(e.target.value)}
-                      className="w-full px-4 py-2 bg-gray-700 text-white border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none"
+                      onChange={(e) => {
+                        setSelectedFlooring(e.target.value);
+                        setValidationErrors(prev => ({ ...prev, flooring: false }));
+                      }}
+                      className={`w-full px-4 py-2 bg-gray-700 text-white border ${validationErrors.flooring ? 'border-red-500' : 'border-gray-600'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none`}
                     >
                       <option value="">Select flooring</option>
                       {flooringProducts.map((product) => (
@@ -336,6 +357,94 @@ const UserPage = () => {
                     <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
                       <i className="fas fa-chevron-down text-gray-400"></i>
                     </div>
+                  </div>
+                </div>
+              </div>
+              <div className="mt-6">
+                <label className="block text-sm font-medium text-gray-200 mb-2 text-center">
+                  Upload Floor Plan
+                </label>
+                <div className="relative max-w-md mx-auto">
+                    <input
+                      type="file"
+                      accept=".jpg,.jpeg,.png"
+                      className="hidden"
+                      id="floorPlan"
+                      onChange={(e) => {
+                        if (e.target.files && e.target.files[0]) {
+                          const file = e.target.files[0];
+                          if (['image/jpeg', 'image/jpg', 'image/png'].includes(file.type)) {
+                            setSelectedFile(file);
+                            setValidationErrors(prev => ({ ...prev, floorPlan: false }));
+                            showNotification("Floor plan uploaded successfully!");
+                          } else {
+                            showNotification("Please upload only JPG, JPEG or PNG files.");
+                          }
+                        }
+                      }}
+                    />
+                    {!selectedFile ? (
+                    <label
+                      htmlFor="floorPlan"
+                      className={`w-full flex flex-col items-center justify-center p-8 bg-gray-700 border-2 border-dashed ${validationErrors.floorPlan ? 'border-red-500' : 'border-gray-600'} rounded-lg hover:border-blue-500 transition-colors duration-200 cursor-pointer group`}
+                      onDragEnter={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        e.currentTarget.classList.add('border-blue-500', 'bg-gray-600', 'ring-2', 'ring-blue-400');
+                      }}
+                      onDragOver={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        e.currentTarget.classList.add('border-blue-500', 'bg-gray-600');
+                      }}
+                      onDragLeave={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        e.currentTarget.classList.remove('border-blue-500', 'bg-gray-600', 'ring-2', 'ring-blue-400');
+                      }}
+                      onDrop={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        e.currentTarget.classList.remove('border-blue-500', 'bg-gray-600', 'ring-2', 'ring-blue-400');
+                        
+                        if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                          const file = e.dataTransfer.files[0];
+                          if (['image/jpeg', 'image/jpg', 'image/png'].includes(file.type)) {
+                            setSelectedFile(file);
+                            setValidationErrors(prev => ({ ...prev, floorPlan: false }));
+                            showNotification("Floor plan uploaded successfully!");
+                          } else {
+                            showNotification("Please upload only JPG, JPEG or PNG files.");
+                          }
+                        }
+                      }}
+                    >
+                      <i className="fas fa-cloud-upload-alt text-4xl mb-2 text-gray-400 group-hover:text-blue-400"></i>
+                      <span className="text-gray-400 group-hover:text-blue-400 mb-1">
+                        Drag and drop files here
+                      </span>
+                      <span className="text-sm text-gray-500 group-hover:text-blue-400">
+                        or click to browse
+                      </span>
+                    </label>
+                  ) : (
+                    <div className="flex flex-col items-center space-y-2">
+                      <img 
+                        src={URL.createObjectURL(selectedFile)} 
+                        alt="Preview" 
+                        className="w-full h-full object-contain bg-gray-700 rounded-lg"
+                      />
+                      <p className="text-white text-sm">{selectedFile.name}</p>
+                      <button 
+                        onClick={() => setSelectedFile(null)}
+                        className="text-red-400 text-xs hover:text-red-300 cursor-pointer"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  )}
+                  <div className="mt-2 text-sm text-gray-400 text-center">
+                    Supported formats: JPG, JPEG, PNG (Max size: 5MB)
                   </div>
                 </div>
               </div>
@@ -361,7 +470,16 @@ const UserPage = () => {
                     setSelectedRoom("");
                     setRoomSize("");
                     setSelectedFlooring("");
+                    setSelectedFile(null);
                     setRecommendations([]);
+                    setValidationErrors({
+                      style: false,
+                      room: false,
+                      roomSize: false,
+                      flooring: false,
+                      floorPlan: false
+                    });
+                    document.querySelector('.bg-gray-800.rounded-lg.shadow-xl').scrollIntoView({ behavior: 'smooth' });
                   }}
                   className="mt-4 w-full bg-gradient-to-r from-red-600 to-pink-600 text-white py-2 px-4 rounded-lg hover:from-red-700 hover:to-pink-700 transition duration-200 !rounded-button whitespace-nowrap cursor-pointer flex items-center justify-center"
                 >
@@ -372,7 +490,7 @@ const UserPage = () => {
             </div>
           </div>
           {recommendations.length > 0 && (
-            <div className="mt-8">
+            <div className="mt-8" ref={recommendationsRef}>
               <h3 className="text-2xl font-bold text-white mb-6">
                 Recommended Products
               </h3>
@@ -416,7 +534,7 @@ const UserPage = () => {
           )}
         </div>
         {showToast && (
-          <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50">
+          <div className={`fixed top-4 left-1/2 transform -translate-x-1/2 ${getToastBackgroundColor(toastMessage)} text-white px-6 py-3 rounded-lg shadow-lg z-50`}>
             {toastMessage}
           </div>
         )}
