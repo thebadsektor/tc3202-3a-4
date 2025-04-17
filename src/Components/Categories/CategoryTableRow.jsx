@@ -8,7 +8,7 @@ const CategoryTableRow = ({ category, onEdit, onDelete }) => {
       <TableCell>
         <button
           onClick={() => onEdit(category)}
-          className="text-blue-500 hover:text-blue-600 p-2"
+          className="text-blue-500 hover:text-blue-600 p-2 cursor-pointer"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -29,7 +29,7 @@ const CategoryTableRow = ({ category, onEdit, onDelete }) => {
       <TableCell>
         <button
           onClick={() => onDelete(category)}
-          className="text-red-500 hover:text-red-600 p-2"
+          className="text-red-500 hover:text-red-600 p-2 cursor-pointer"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"

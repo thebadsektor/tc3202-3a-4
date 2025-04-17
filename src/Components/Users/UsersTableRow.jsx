@@ -11,7 +11,7 @@ const UsersTableRow = ({ user, onDelete }) => {
       <TableCell>
         <button
           onClick={() => onDelete(user)}
-          className="text-red-500 hover:text-red-600 p-2"
+          className="text-red-500 hover:text-red-600 p-2 cursor-pointer"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"

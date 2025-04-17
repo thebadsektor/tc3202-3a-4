@@ -173,6 +173,7 @@ const AdminPage = () => {
                     : "text-gray-400 hover:bg-[#2D3B4F]"
                 }`}
                 onClick={() => setActiveTab("dashboard")}
+                title={isCollapsed ? "Dashboard" : ""}
               >
                 <i className="fas fa-home"></i>
                 <span className={`${isCollapsed ? "hidden" : "block"}`}>
@@ -188,6 +189,7 @@ const AdminPage = () => {
                     : "text-gray-400 hover:bg-[#2D3B4F]"
                 }`}
                 onClick={() => setActiveTab("products")}
+                title={isCollapsed ? "Products" : ""}
               >
                 <i className="fas fa-box"></i>
                 <span className={`${isCollapsed ? "hidden" : "block"}`}>
@@ -203,6 +205,7 @@ const AdminPage = () => {
                     : "text-gray-400 hover:bg-[#2D3B4F]"
                 }`}
                 onClick={() => setActiveTab("users")}
+                title={isCollapsed ? "Users" : ""}
               >
                 <i className="fas fa-users"></i>
                 <span className={`${isCollapsed ? "hidden" : "block"}`}>
@@ -216,6 +219,7 @@ const AdminPage = () => {
                   isCollapsed ? "justify-center" : "space-x-3"
                 } w-full px-4 py-3 text-red-400 hover:bg-red-500 hover:text-white rounded-lg transition-colors duration-200 cursor-pointer`}
                 onClick={handleLogout}
+                title={isCollapsed ? "Logout" : ""}
               >
                 <i className="fas fa-sign-out-alt"></i>
                 <span className={`${isCollapsed ? "hidden" : "block"}`}>
@@ -241,7 +245,11 @@ const AdminPage = () => {
                 className="w-8 h-8 rounded-lg"
               />
               <h1 className="text-2xl font-semibold">
-                {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}
+                {activeTab === "products"
+                  ? "Product Management"
+                  : activeTab === "users"
+                  ? "User Management"
+                  : activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}
               </h1>
             </div>
             <div className="flex items-center space-x-4">

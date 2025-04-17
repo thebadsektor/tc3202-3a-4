@@ -312,7 +312,7 @@ const UsersTable = () => {
   return (
     <div className="bg-[#1E293B] p-6 rounded-xl">
       <div className="p-6 flex justify-between items-center">
-        <h2 className="text-white text-xl font-semibold">User Management</h2>
+        <h2 className="text-white text-xl font-semibold">Users</h2>
         <div className="flex items-center gap-4">
           <div className="relative">
             <input

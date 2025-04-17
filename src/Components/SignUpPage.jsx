@@ -11,11 +11,21 @@ const SignUpPage = () => {
   const [errorMsg, setErrorMsg] = useState("");
   const [role, setRole] = useState("user");
   const [loading, setLoading] = useState(false);
+  const [invalidFields, setInvalidFields] = useState({
+    email: false,
+    password: false,
+    confirmPassword: false,
+  });
   const navigate = useNavigate();
 
   const handleSignUp = async () => {
     if (!email || !password || !confirmPassword) {
       setErrorMsg("Please fill in all fields");
+      setInvalidFields({
+        email: !email,
+        password: !password,
+        confirmPassword: !confirmPassword,
+      });
       return;
     }
     if (password !== confirmPassword) {
@@ -110,8 +120,14 @@ const SignUpPage = () => {
               type="email"
               placeholder="Email address"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-3 border-none bg-[#2A303C] text-white rounded-lg text-sm focus:ring-2 focus:ring-[#4169E1]"
+              onChange={(e) => {
+                setEmail(e.target.value);
+                if (invalidFields.email)
+                  setInvalidFields({ ...invalidFields, email: false });
+              }}
+              className={`w-full px-4 py-3 ${
+                invalidFields.email ? "border-2 border-red-500" : "border-none"
+              } bg-[#2A303C] text-white rounded-lg text-sm focus:ring-2 focus:ring-[#4169E1]`}
             />
             <i className="fas fa-envelope absolute right-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
           </div>
@@ -120,8 +136,16 @@ const SignUpPage = () => {
               type={showPassword ? "text" : "password"}
               placeholder="Password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-3 border-none bg-[#2A303C] text-white rounded-lg text-sm focus:ring-2 focus:ring-[#4169E1]"
+              onChange={(e) => {
+                setPassword(e.target.value);
+                if (invalidFields.password)
+                  setInvalidFields({ ...invalidFields, password: false });
+              }}
+              className={`w-full px-4 py-3 ${
+                invalidFields.password
+                  ? "border-2 border-red-500"
+                  : "border-none"
+              } bg-[#2A303C] text-white rounded-lg text-sm focus:ring-2 focus:ring-[#4169E1]`}
             />
             <button
               type="button"
@@ -138,8 +162,19 @@ const SignUpPage = () => {
               type={showConfirmPassword ? "text" : "password"}
               placeholder="Confirm Password"
               value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              className="w-full px-4 py-3 border-none bg-[#2A303C] text-white rounded-lg text-sm focus:ring-2 focus:ring-[#4169E1]"
+              onChange={(e) => {
+                setConfirmPassword(e.target.value);
+                if (invalidFields.confirmPassword)
+                  setInvalidFields({
+                    ...invalidFields,
+                    confirmPassword: false,
+                  });
+              }}
+              className={`w-full px-4 py-3 ${
+                invalidFields.confirmPassword
+                  ? "border-2 border-red-500"
+                  : "border-none"
+              } bg-[#2A303C] text-white rounded-lg text-sm focus:ring-2 focus:ring-[#4169E1]`}
             />
             <button
               type="button"

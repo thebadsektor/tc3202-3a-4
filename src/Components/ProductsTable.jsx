@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import TableHeader from "./shared/Table/TableHeader";
 import ProductTableRow from "./Products/ProductTableRow";
 import ProductModal from "./Products/ProductModal";
@@ -18,6 +18,26 @@ const ProductsTable = ({ initialProducts, categories, styles }) => {
   const [newProduct, setNewProduct] = useState({});
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [productToDelete, setProductToDelete] = useState(null);
+  const [sortOption, setSortOption] = useState(() => {
+    // Get saved sort option from localStorage or default to "newest"
+    return localStorage.getItem("productSortOption") || "newest";
+  });
+  const [showSortDropdown, setShowSortDropdown] = useState(false);
+  const dropdownRef = useRef(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowSortDropdown(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const handleAddProduct = async () => {
     try {
@@ -107,21 +127,44 @@ const ProductsTable = ({ initialProducts, categories, styles }) => {
     setShowProductModal(true);
   };
 
-  // Filter products based on search term
+  // Save sort option to localStorage whenever it changes
   useEffect(() => {
-    if (searchTerm.trim() === "") {
-      setFilteredProducts(products);
-    } else {
+    localStorage.setItem("productSortOption", sortOption);
+  }, [sortOption]);
+
+  // Filter and sort products based on search term and sort option
+  useEffect(() => {
+    let filtered = [...products];
+
+    // Apply search filter
+    if (searchTerm.trim() !== "") {
       const lowercasedSearch = searchTerm.toLowerCase();
-      const filtered = products.filter(
+      filtered = filtered.filter(
         (product) =>
           product.name.toLowerCase().includes(lowercasedSearch) ||
           product.category.toLowerCase().includes(lowercasedSearch) ||
           product.style.toLowerCase().includes(lowercasedSearch)
       );
-      setFilteredProducts(filtered);
     }
-  }, [searchTerm, products]);
+
+    // Apply sorting
+    switch (sortOption) {
+      case "newest":
+        // Assuming newer items are at the end of the array
+        filtered = [...filtered].reverse();
+        break;
+      case "oldest":
+        // Keep original order (assuming older items are at the beginning)
+        break;
+      case "alphabetical":
+        filtered = [...filtered].sort((a, b) => a.name.localeCompare(b.name));
+        break;
+      default:
+        break;
+    }
+
+    setFilteredProducts(filtered);
+  }, [searchTerm, products, sortOption]);
 
   return (
     <>
@@ -129,29 +172,101 @@ const ProductsTable = ({ initialProducts, categories, styles }) => {
         <div className="p-6 flex justify-between items-center">
           <h2 className="text-white text-xl font-semibold">Products</h2>
           <div className="flex items-center gap-4">
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Search products..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="px-4 py-2 bg-[#1A1F2A] text-white rounded-lg border-none w-64 focus:outline-none focus:ring-2 focus:ring-[#4169E1]"
-              />
-              <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
+            <div className="flex items-center gap-2">
+              {/* Filter/Sort Button with Dropdown */}
+              <div className="relative" ref={dropdownRef}>
+                <button
+                  onClick={() => setShowSortDropdown(!showSortDropdown)}
+                  className="p-2 bg-[#1A1F2A] text-white rounded-lg hover:bg-[#2A303D] transition-colors flex items-center gap-1 cursor-pointer"
+                  title="Sort products"
                 >
-                  <circle cx="11" cy="11" r="8"></circle>
-                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                </svg>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M4 8h16M4 16h10"></path>
+                    <path d="M8 4v16"></path>
+                    <path d="M16 4v6"></path>
+                  </svg>
+                </button>
+
+                {showSortDropdown && (
+                  <div className="absolute right-0 mt-2 w-48 bg-[#1A1F2A] rounded-lg shadow-lg z-10">
+                    <ul className="py-1">
+                      <li
+                        className={`px-4 py-2 hover:bg-[#2A303D] cursor-pointer ${
+                          sortOption === "newest"
+                            ? "text-blue-400"
+                            : "text-white"
+                        }`}
+                        onClick={() => {
+                          setSortOption("newest");
+                          setShowSortDropdown(false);
+                        }}
+                      >
+                        Newest Added
+                      </li>
+                      <li
+                        className={`px-4 py-2 hover:bg-[#2A303D] cursor-pointer ${
+                          sortOption === "oldest"
+                            ? "text-blue-400"
+                            : "text-white"
+                        }`}
+                        onClick={() => {
+                          setSortOption("oldest");
+                          setShowSortDropdown(false);
+                        }}
+                      >
+                        Oldest Added
+                      </li>
+                      <li
+                        className={`px-4 py-2 hover:bg-[#2A303D] cursor-pointer ${
+                          sortOption === "alphabetical"
+                            ? "text-blue-400"
+                            : "text-white"
+                        }`}
+                        onClick={() => {
+                          setSortOption("alphabetical");
+                          setShowSortDropdown(false);
+                        }}
+                      >
+                        Alphabetical
+                      </li>
+                    </ul>
+                  </div>
+                )}
+              </div>
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="Search products..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="px-4 py-2 bg-[#1A1F2A] text-white rounded-lg border-none w-64 focus:outline-none focus:ring-2 focus:ring-[#4169E1]"
+                />
+                <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                  </svg>
+                </div>
               </div>
             </div>
             <button
@@ -226,13 +341,13 @@ const ProductsTable = ({ initialProducts, categories, styles }) => {
           <div className="flex justify-end gap-2">
             <button
               onClick={() => setShowDeleteConfirm(false)}
-              className="px-4 py-2 text-gray-400 hover:text-white !rounded-button cursor-pointer"
+              className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors cursor-pointer"
             >
               Cancel
             </button>
             <button
               onClick={confirmDelete}
-              className="px-4 py-2 bg-red-500 text-white !rounded-button cursor-pointer"
+              className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors cursor-pointer"
             >
               Delete
             </button>

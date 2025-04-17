@@ -10,6 +10,11 @@ const LoginPage = () => {
   const [role, setRole] = useState("user");
   const [errorMsg, setErrorMsg] = useState("");
   const [loading, setLoading] = useState(false);
+  const [invalidRole, setInvalidRole] = useState(null);
+  const [invalidFields, setInvalidFields] = useState({
+    email: false,
+    password: false,
+  });
 
   const navigate = useNavigate();
 
@@ -34,9 +39,19 @@ const LoginPage = () => {
     navigate(path);
   };
 
+  const handleRoleChange = (selectedRole) => {
+    setRole(selectedRole);
+    setErrorMsg("");
+    setInvalidRole(null);
+  };
+
   const handleLogin = async () => {
     if (!email || !password) {
       setErrorMsg("Please fill in all fields");
+      setInvalidFields({
+        email: !email,
+        password: !password,
+      });
       return;
     }
 
@@ -66,6 +81,7 @@ const LoginPage = () => {
         setErrorMsg(
           "Access Denied: You are not authorized to access this role."
         );
+        setInvalidRole("admin");
         return;
       }
 
@@ -75,6 +91,7 @@ const LoginPage = () => {
         setErrorMsg(
           "Access Denied: You are not authorized to access this role."
         );
+        setInvalidRole("user");
         return;
       }
 
@@ -83,6 +100,14 @@ const LoginPage = () => {
     } catch (error) {
       console.error("Error logging in:", error.message);
       setErrorMsg(error.message || "Error logging in");
+
+      // If error message contains "Invalid login credentials", highlight both fields
+      if (error.message === "Invalid login credentials") {
+        setInvalidFields({
+          email: true,
+          password: true,
+        });
+      }
     } finally {
       setLoading(false);
     }
@@ -107,8 +132,8 @@ const LoginPage = () => {
                 role === "user"
                   ? "bg-[#4169E1] text-white"
                   : "bg-[#2A303C] text-gray-400"
-              }`}
-              onClick={() => setRole("user")}
+              } ${invalidRole === "user" ? "border-2 border-red-500" : ""}`}
+              onClick={() => handleRoleChange("user")}
             >
               <i className="fas fa-user mr-2"></i> User
             </button>
@@ -117,8 +142,8 @@ const LoginPage = () => {
                 role === "admin"
                   ? "bg-[#4169E1] text-white"
                   : "bg-[#2A303C] text-gray-400"
-              }`}
-              onClick={() => setRole("admin")}
+              } ${invalidRole === "admin" ? "border-2 border-red-500" : ""}`}
+              onClick={() => handleRoleChange("admin")}
             >
               <i className="fas fa-user-shield mr-2"></i> Admin
             </button>
@@ -128,8 +153,14 @@ const LoginPage = () => {
               type="email"
               placeholder="Email address"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-3 border-none bg-[#2A303C] text-white rounded-lg text-sm focus:ring-2 focus:ring-[#4169E1]"
+              onChange={(e) => {
+                setEmail(e.target.value);
+                if (invalidFields.email)
+                  setInvalidFields({ ...invalidFields, email: false });
+              }}
+              className={`w-full px-4 py-3 ${
+                invalidFields.email ? "border-2 border-red-500" : "border-none"
+              } bg-[#2A303C] text-white rounded-lg text-sm focus:ring-2 focus:ring-[#4169E1]`}
             />
             <i className="fas fa-envelope absolute right-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
           </div>
@@ -138,8 +169,16 @@ const LoginPage = () => {
               type={showPassword ? "text" : "password"}
               placeholder="Password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-3 border-none bg-[#2A303C] text-white rounded-lg text-sm focus:ring-2 focus:ring-[#4169E1]"
+              onChange={(e) => {
+                setPassword(e.target.value);
+                if (invalidFields.password)
+                  setInvalidFields({ ...invalidFields, password: false });
+              }}
+              className={`w-full px-4 py-3 ${
+                invalidFields.password
+                  ? "border-2 border-red-500"
+                  : "border-none"
+              } bg-[#2A303C] text-white rounded-lg text-sm focus:ring-2 focus:ring-[#4169E1]`}
             />
             <button
               type="button"

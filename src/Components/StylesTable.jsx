@@ -147,13 +147,13 @@ const StylesTable = ({ initialStyles, onStyleUpdate }) => {
           <div className="flex justify-end gap-2">
             <button
               onClick={() => setShowDeleteConfirm(false)}
-              className="px-4 py-2 text-gray-400 hover:text-white !rounded-button cursor-pointer"
+              className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors cursor-pointer"
             >
               Cancel
             </button>
             <button
               onClick={confirmDelete}
-              className="px-4 py-2 bg-red-500 text-white !rounded-button cursor-pointer"
+              className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors cursor-pointer"
             >
               Delete
             </button>
