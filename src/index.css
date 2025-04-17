@@ -1,2 +1,12 @@
 @import "tailwindcss";
 
+/* Override autofill styles */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px #2a303c inset !important; /* Use the desired background color */
+  -webkit-text-fill-color: white !important; /* Use the desired text color */
+  caret-color: white !important; /* Ensure cursor color matches */
+  transition: background-color 5000s ease-in-out 0s; /* Add a long transition to delay the browser style */
+}

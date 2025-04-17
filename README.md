@@ -1,4 +1,4 @@
-# TC-3202 [Project Title]
+# TC-3202 [IntelCor]
 
 ![Project Banner](https://via.placeholder.com/1200x400.png?text=Project+Banner+Placeholder)
 
@@ -21,40 +21,40 @@
 
 ## Introduction
 
-Provide a brief introduction to the project. Explain the purpose, scope, and the problem it solves in a few sentences.
+IntelCor is a web-based, AI-powered room design assistant that streamlines interior design planning by providing intelligent, automated recommendations tailored to a user's specific room layout and design preferences. The system addresses the challenge of overwhelming design choices by delivering optimized product suggestions and accurate quantity estimates.
 
 ## Project Overview
 
-Describe the project in detail. Include:
+IntellCor was developed in response to the difficulties users face when trying to choose the most appropriate design elements for their rooms due to the overwhelming amount of options. Targeted towards homeowners, interior designers, and retailers, the system automatically recommends the best-fitting products and estimates the required quantity based on a 2D floor plan and user inputs.
 
-- The project's background or context.
-- Its target audience or users.
-- Any real-world applications or potential impact.
+Real-world applications include home renovation planning, professional interior design support, and enhanced retail experiences for hardware or furniture stores through AI integration.
 
 ## Objectives
 
-State the main objectives of the capstone project, such as:
+**General Objective:**
 
-- Develop a solution for [problem].
-- Implement features to [goal].
-- Test and validate [key aspect].
+- Develop IntellCor, an AI-powered room design assistant that provides optimized product recommendations based on user inputs and room specifications.
+
+**Specific Objectives:**
+
+- Create a user-friendly interface for uploading floor plans and entering room details.
+- Implement machine learning for product selection and quantity estimation.
+- Use FastAPI to manage APIs and process data efficiently.
+- Deploy the app using a scalable cloud service suitable for beginners.
 
 ## Features
 
-List the main features of the project:
-
-- Feature 1: Brief description.
-- Feature 2: Brief description.
-- Feature 3: Brief description.
+- **Room Data Input:** Upload 2D floor plans and enter room details such as size.
+- **AI-Powered Recommendations:** Smart suggestions for flooring, tiles, light fixtures, and furniture.
+- **Admin Dashboard:** Manage product data and monitor system activity.
+- **Quantity Estimation:** Predict the number of items needed based on room size and layout.
 
 ## Technologies Used
 
-Mention the tools, frameworks, and technologies used in the project:
-
-- Programming Languages: [e.g., Python, JavaScript, etc.]
-- Frameworks/Libraries: [e.g., React, Flask, etc.]
-- Databases: [e.g., MySQL, MongoDB, etc.]
-- Other Tools: [e.g., Git, Docker, etc.]
+- **Programming Languages:** Python, JavaScript, HTML, CSS
+- **Frameworks/Libraries:** React.js, FastAPI, TensorFlow/Scikit-learn
+- **Databases:** Supabase and Appwrite
+- **Other Tools:** Git, Render or Heroku (for deployment)
 
 ## Setup and Installation
 
@@ -129,11 +129,10 @@ Explain the structure of the project directory. Example:
 
 List all the team members involved in the project. Include their roles and responsibilities:
 
-- **Dean Martin M. Mabulay**: Lead Developer, Full Stack Developer
-- **Joyce Ann v. Cuala**: UI/UX Designer, Documentation
-- **Dondon R. Esquivel**: Backend Developer, Machine Learning Specialist, AI Model ng Patis
-- **Leorogel D. Oca**: Backend Developer, Documentation kapuso mo Jessica Soho
-- **Gerald Villaran**: Course Instructor
+- **Dean Martin M. Mabulay:** Lead Developer, Full-Stack Developer, Machine Learning Developer
+- **Joyce Ann v. Cuala:** UI/UX Designer, Documentation
+- **Dondon R. Esquivel:** Backend Developer, Machine Learning Specialist
+- **Leorogel D. Oca:** Backend Developer, Documentation
 
 ## Project Timeline
 
@@ -173,4 +172,4 @@ This project was built from [Original Project Name](https://github.com/username/
 
 ## License
 
-Specify the project's license. For starters, adapt the license of the original repository.
+This project uses the MIT License. Refer to the LICENSE file for more details.

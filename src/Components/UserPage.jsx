@@ -10,6 +10,7 @@ import {
   getCategories,
   getStyles,
 } from "../utils/appwriteService";
+import LogoutConfirmationModal from "./shared/LogoutConfirmationModal";
 import "swiper/css";
 import "swiper/css/pagination";
 
@@ -27,7 +28,7 @@ const UserPage = () => {
     room: false,
     roomSize: false,
     flooring: false,
-    floorPlan: false
+    floorPlan: false,
   });
   const [recommendations, setRecommendations] = useState([]);
   const [user, setUser] = useState(null);
@@ -36,6 +37,7 @@ const UserPage = () => {
   const [styles, setStyles] = useState([]);
   const [categories, setCategories] = useState([]);
   const [flooringProducts, setFlooringProducts] = useState([]);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
   const recommendationsRef = React.useRef(null);
   const navigate = useNavigate();
 
@@ -94,17 +96,64 @@ const UserPage = () => {
   };
 
   const getToastBackgroundColor = (message) => {
-    return message === "Please fill in all required fields" ? "bg-red-500" : "bg-green-500";
+    return message === "Please fill in all required fields"
+      ? "bg-red-500"
+      : "bg-green-500";
   };
 
-  const handleLogout = async () => {
+  const handleLogout = () => {
+    setShowLogoutModal(true);
+    setShowProfileMenu(false);
+  };
+
+  const confirmLogout = async () => {
     try {
       await supabase.auth.signOut();
       navigate("/"); // Navigate back to LoginPage.jsx
     } catch (error) {
       console.error("Error logging out:", error);
       showNotification("Logout failed. Please try again.");
+    } finally {
+      setShowLogoutModal(false);
     }
+  };
+
+  const [detectedShape, setDetectedShape] = useState("");
+  const [calculatedSize, setCalculatedSize] = useState("");
+
+  const calculateProductQuantity = (roomSize, productName) => {
+    // Basic quantity calculation based on room size
+    const size = parseFloat(roomSize);
+
+    // Check if this is the selected flooring product
+    if (productName === selectedFlooring) {
+      // For flooring products, calculate exact number of 12x12 inch tiles needed
+      // 1 sq meter = 10.764 sq feet
+      // 12x12 inch tile = 1 sq foot
+      const sqFeet = size * 10.764;
+      const tilesNeeded = Math.ceil(sqFeet);
+      return tilesNeeded.toString();
+    } else {
+      // For non-flooring products, use the original calculation
+      if (size < 15) return "1-2";
+      if (size < 30) return "2-3";
+      return "3-4";
+    }
+  };
+
+  const getVisibleProducts = (products, roomSize) => {
+    const size = parseFloat(roomSize);
+    let numRows = 3; // Default to all rows
+
+    if (size < 15) {
+      numRows = 2;
+    } else if (size >= 15 && size <= 30) {
+      numRows = 3;
+    }
+
+    // Calculate products per row (3 products per row in grid)
+    const productsToShow = numRows * 3;
+    return products.slice(0, productsToShow);
   };
 
   const generateRecommendations = async () => {
@@ -114,48 +163,61 @@ const UserPage = () => {
       room: !selectedRoom,
       roomSize: !roomSize,
       flooring: !selectedFlooring,
-      floorPlan: !selectedFile
+      floorPlan: !selectedFile,
     };
 
     setValidationErrors(errors);
 
     // If any field is empty, show error message and return
-    if (Object.values(errors).some(error => error)) {
+    if (Object.values(errors).some((error) => error)) {
       showNotification("Please fill in all required fields");
       return;
     }
 
     setIsGenerating(true);
-    
+
     try {
-      const response = await fetch('http://localhost:8000/api/recommendations', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          room: selectedRoom,
-          style: selectedStyle,
-          flooring: selectedFlooring
-        })
-      });
-      
-      if (!response.ok) {
-        throw new Error('Failed to fetch recommendations');
+      // First analyze the floor plan if uploaded
+      if (selectedFile) {
+        const { analyzeFloorPlan } = await import("../utils/floorPlanAnalyzer");
+        const { shape, size } = await analyzeFloorPlan(selectedFile, roomSize);
+        setDetectedShape(shape);
+        setCalculatedSize(size);
       }
-      
+
+      const response = await fetch(
+        "http://localhost:8000/api/recommendations",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            room: selectedRoom,
+            style: selectedStyle,
+            flooring: selectedFlooring,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch recommendations");
+      }
+
       const data = await response.json();
-      setRecommendations(data.products);
+      // Filter products based on room size
+      const visibleProducts = getVisibleProducts(data.products, roomSize);
+      setRecommendations(visibleProducts);
       showNotification("New recommendations generated!");
-      
+
       // Scroll to recommendations section after they're loaded
       setTimeout(() => {
         if (recommendationsRef.current) {
-          recommendationsRef.current.scrollIntoView({ behavior: 'smooth' });
+          recommendationsRef.current.scrollIntoView({ behavior: "smooth" });
         }
       }, 100);
     } catch (error) {
-      console.error('Error fetching recommendations:', error);
+      console.error("Error fetching recommendations:", error);
       showNotification("Failed to generate recommendations. Please try again.");
     } finally {
       setIsGenerating(false);
@@ -198,6 +260,11 @@ const UserPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-900">
+      <LogoutConfirmationModal
+        isOpen={showLogoutModal}
+        onClose={() => setShowLogoutModal(false)}
+        onConfirm={confirmLogout}
+      />
       <nav className="bg-gray-800 shadow-lg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
@@ -254,9 +321,14 @@ const UserPage = () => {
                 Experience the future of interior design with our AI-powered
                 room design assistant. Create your perfect space in minutes.
               </p>
-              <button className="bg-blue-500 hover:bg-blue-600 px-8 py-3 text-white rounded-lg font-medium transition-colors !rounded-button whitespace-nowrap cursor-pointer" onClick={() => {
-                document.querySelector('.bg-gray-800.rounded-lg.shadow-xl').scrollIntoView({ behavior: 'smooth' });
-              }}>
+              <button
+                className="bg-blue-500 hover:bg-blue-600 px-8 py-3 text-white rounded-lg font-medium transition-colors !rounded-button whitespace-nowrap cursor-pointer"
+                onClick={() => {
+                  document
+                    .querySelector(".bg-gray-800.rounded-lg.shadow-xl")
+                    .scrollIntoView({ behavior: "smooth" });
+                }}
+              >
                 Get Started
               </button>
             </div>
@@ -278,9 +350,16 @@ const UserPage = () => {
                       value={selectedStyle}
                       onChange={(e) => {
                         setSelectedStyle(e.target.value);
-                        setValidationErrors(prev => ({ ...prev, style: false }));
+                        setValidationErrors((prev) => ({
+                          ...prev,
+                          style: false,
+                        }));
                       }}
-                      className={`w-full px-4 py-2 bg-gray-700 text-white border ${validationErrors.style ? 'border-red-500' : 'border-gray-600'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none`}
+                      className={`w-full px-4 py-2 bg-gray-700 text-white border ${
+                        validationErrors.style
+                          ? "border-red-500"
+                          : "border-gray-600"
+                      } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none`}
                     >
                       <option value="">Select style</option>
                       {styles.map((style) => (
@@ -303,9 +382,16 @@ const UserPage = () => {
                       value={selectedRoom}
                       onChange={(e) => {
                         setSelectedRoom(e.target.value);
-                        setValidationErrors(prev => ({ ...prev, room: false }));
+                        setValidationErrors((prev) => ({
+                          ...prev,
+                          room: false,
+                        }));
                       }}
-                      className={`w-full px-4 py-2 bg-gray-700 text-white border ${validationErrors.room ? 'border-red-500' : 'border-gray-600'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none`}
+                      className={`w-full px-4 py-2 bg-gray-700 text-white border ${
+                        validationErrors.room
+                          ? "border-red-500"
+                          : "border-gray-600"
+                      } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none`}
                     >
                       <option value="">Select room</option>
                       {categories.map((category) => (
@@ -328,9 +414,16 @@ const UserPage = () => {
                     value={roomSize}
                     onChange={(e) => {
                       setRoomSize(e.target.value);
-                      setValidationErrors(prev => ({ ...prev, roomSize: false }));
+                      setValidationErrors((prev) => ({
+                        ...prev,
+                        roomSize: false,
+                      }));
                     }}
-                    className={`w-full px-4 py-2 bg-gray-700 text-white border ${validationErrors.roomSize ? 'border-red-500' : 'border-gray-600'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
+                    className={`w-full px-4 py-2 bg-gray-700 text-white border ${
+                      validationErrors.roomSize
+                        ? "border-red-500"
+                        : "border-gray-600"
+                    } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
                     placeholder="Enter room size"
                   />
                 </div>
@@ -343,9 +436,16 @@ const UserPage = () => {
                       value={selectedFlooring}
                       onChange={(e) => {
                         setSelectedFlooring(e.target.value);
-                        setValidationErrors(prev => ({ ...prev, flooring: false }));
+                        setValidationErrors((prev) => ({
+                          ...prev,
+                          flooring: false,
+                        }));
                       }}
-                      className={`w-full px-4 py-2 bg-gray-700 text-white border ${validationErrors.flooring ? 'border-red-500' : 'border-gray-600'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none`}
+                      className={`w-full px-4 py-2 bg-gray-700 text-white border ${
+                        validationErrors.flooring
+                          ? "border-red-500"
+                          : "border-gray-600"
+                      } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none`}
                     >
                       <option value="">Select flooring</option>
                       {flooringProducts.map((product) => (
@@ -365,56 +465,98 @@ const UserPage = () => {
                   Upload Floor Plan
                 </label>
                 <div className="relative max-w-md mx-auto">
-                    <input
-                      type="file"
-                      accept=".jpg,.jpeg,.png"
-                      className="hidden"
-                      id="floorPlan"
-                      onChange={(e) => {
-                        if (e.target.files && e.target.files[0]) {
-                          const file = e.target.files[0];
-                          if (['image/jpeg', 'image/jpg', 'image/png'].includes(file.type)) {
-                            setSelectedFile(file);
-                            setValidationErrors(prev => ({ ...prev, floorPlan: false }));
-                            showNotification("Floor plan uploaded successfully!");
-                          } else {
-                            showNotification("Please upload only JPG, JPEG or PNG files.");
-                          }
+                  <input
+                    type="file"
+                    accept=".jpg,.jpeg,.png"
+                    className="hidden"
+                    id="floorPlan"
+                    onChange={(e) => {
+                      if (e.target.files && e.target.files[0]) {
+                        const file = e.target.files[0];
+                        if (
+                          ["image/jpeg", "image/jpg", "image/png"].includes(
+                            file.type
+                          )
+                        ) {
+                          setSelectedFile(file);
+                          setValidationErrors((prev) => ({
+                            ...prev,
+                            floorPlan: false,
+                          }));
+                          showNotification("Floor plan uploaded successfully!");
+                        } else {
+                          showNotification(
+                            "Please upload only JPG, JPEG or PNG files."
+                          );
                         }
-                      }}
-                    />
-                    {!selectedFile ? (
+                      }
+                    }}
+                  />
+                  {!selectedFile ? (
                     <label
                       htmlFor="floorPlan"
-                      className={`w-full flex flex-col items-center justify-center p-8 bg-gray-700 border-2 border-dashed ${validationErrors.floorPlan ? 'border-red-500' : 'border-gray-600'} rounded-lg hover:border-blue-500 transition-colors duration-200 cursor-pointer group`}
+                      className={`w-full flex flex-col items-center justify-center p-8 bg-gray-700 border-2 border-dashed ${
+                        validationErrors.floorPlan
+                          ? "border-red-500"
+                          : "border-gray-600"
+                      } rounded-lg hover:border-blue-500 transition-colors duration-200 cursor-pointer group`}
                       onDragEnter={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        e.currentTarget.classList.add('border-blue-500', 'bg-gray-600', 'ring-2', 'ring-blue-400');
+                        e.currentTarget.classList.add(
+                          "border-blue-500",
+                          "bg-gray-600",
+                          "ring-2",
+                          "ring-blue-400"
+                        );
                       }}
                       onDragOver={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        e.currentTarget.classList.add('border-blue-500', 'bg-gray-600');
+                        e.currentTarget.classList.add(
+                          "border-blue-500",
+                          "bg-gray-600"
+                        );
                       }}
                       onDragLeave={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        e.currentTarget.classList.remove('border-blue-500', 'bg-gray-600', 'ring-2', 'ring-blue-400');
+                        e.currentTarget.classList.remove(
+                          "border-blue-500",
+                          "bg-gray-600",
+                          "ring-2",
+                          "ring-blue-400"
+                        );
                       }}
                       onDrop={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        e.currentTarget.classList.remove('border-blue-500', 'bg-gray-600', 'ring-2', 'ring-blue-400');
-                        
+                        e.currentTarget.classList.remove(
+                          "border-blue-500",
+                          "bg-gray-600",
+                          "ring-2",
+                          "ring-blue-400"
+                        );
+
                         if (e.dataTransfer.files && e.dataTransfer.files[0]) {
                           const file = e.dataTransfer.files[0];
-                          if (['image/jpeg', 'image/jpg', 'image/png'].includes(file.type)) {
+                          if (
+                            ["image/jpeg", "image/jpg", "image/png"].includes(
+                              file.type
+                            )
+                          ) {
                             setSelectedFile(file);
-                            setValidationErrors(prev => ({ ...prev, floorPlan: false }));
-                            showNotification("Floor plan uploaded successfully!");
+                            setValidationErrors((prev) => ({
+                              ...prev,
+                              floorPlan: false,
+                            }));
+                            showNotification(
+                              "Floor plan uploaded successfully!"
+                            );
                           } else {
-                            showNotification("Please upload only JPG, JPEG or PNG files.");
+                            showNotification(
+                              "Please upload only JPG, JPEG or PNG files."
+                            );
                           }
                         }
                       }}
@@ -429,13 +571,13 @@ const UserPage = () => {
                     </label>
                   ) : (
                     <div className="flex flex-col items-center space-y-2">
-                      <img 
-                        src={URL.createObjectURL(selectedFile)} 
-                        alt="Preview" 
+                      <img
+                        src={URL.createObjectURL(selectedFile)}
+                        alt="Preview"
                         className="w-full h-full object-contain bg-gray-700 rounded-lg"
                       />
                       <p className="text-white text-sm">{selectedFile.name}</p>
-                      <button 
+                      <button
                         onClick={() => setSelectedFile(null)}
                         className="text-red-400 text-xs hover:text-red-300 cursor-pointer"
                       >
@@ -477,9 +619,11 @@ const UserPage = () => {
                       room: false,
                       roomSize: false,
                       flooring: false,
-                      floorPlan: false
+                      floorPlan: false,
                     });
-                    document.querySelector('.bg-gray-800.rounded-lg.shadow-xl').scrollIntoView({ behavior: 'smooth' });
+                    document
+                      .querySelector(".bg-gray-800.rounded-lg.shadow-xl")
+                      .scrollIntoView({ behavior: "smooth" });
                   }}
                   className="mt-4 w-full bg-gradient-to-r from-red-600 to-pink-600 text-white py-2 px-4 rounded-lg hover:from-red-700 hover:to-pink-700 transition duration-200 !rounded-button whitespace-nowrap cursor-pointer flex items-center justify-center"
                 >
@@ -491,6 +635,19 @@ const UserPage = () => {
           </div>
           {recommendations.length > 0 && (
             <div className="mt-8" ref={recommendationsRef}>
+              {detectedShape && (
+                <div className="mb-6">
+                  <h4 className="text-2xl font-bold text-white mb-2">
+                    Floor Plan Analysis
+                  </h4>
+                  <p className="text-2xl font-bold text-gray-300">
+                    Detected Shape: {detectedShape}
+                  </p>
+                  <p className="text-2xl font-bold text-gray-300">
+                    Calculated Size: {calculatedSize}
+                  </p>
+                </div>
+              )}
               <h3 className="text-2xl font-bold text-white mb-6">
                 Recommended Products
               </h3>
@@ -509,6 +666,10 @@ const UserPage = () => {
                       <h4 className="text-lg font-semibold text-white mb-2">
                         {product.name}
                       </h4>
+                      <p className="text-gray-400 text-sm mb-2">
+                        Quantity:{" "}
+                        {calculateProductQuantity(roomSize, product.name)} pcs
+                      </p>
                       {/* <p className="text-gray-400 text-sm mb-2">
                         {product.description}
                       </p>
@@ -534,7 +695,11 @@ const UserPage = () => {
           )}
         </div>
         {showToast && (
-          <div className={`fixed top-4 left-1/2 transform -translate-x-1/2 ${getToastBackgroundColor(toastMessage)} text-white px-6 py-3 rounded-lg shadow-lg z-50`}>
+          <div
+            className={`fixed top-4 left-1/2 transform -translate-x-1/2 ${getToastBackgroundColor(
+              toastMessage
+            )} text-white px-6 py-3 rounded-lg shadow-lg z-50`}
+          >
             {toastMessage}
           </div>
         )}

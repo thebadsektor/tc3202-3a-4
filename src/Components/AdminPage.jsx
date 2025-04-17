@@ -4,9 +4,14 @@ import { supabase } from "../utils/supabaseClient";
 import DashboardTab from "./DashboardTab";
 import ProductsTab from "./ProductsTab";
 import UsersTab from "./UsersTab";
+import LogoutConfirmationModal from "./shared/LogoutConfirmationModal";
 
 const AdminPage = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
+  // Track if this is a new login session
+  const [isNewSession, setIsNewSession] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+
   const [activeTab, setActiveTab] = useState(() => {
     // Get saved tab from localStorage or default to dashboard
     return localStorage.getItem("adminActiveTab") || "dashboard";
@@ -40,6 +45,26 @@ const AdminPage = () => {
         }
 
         setUser(userData.user);
+
+        // Check if this is a new login session by comparing session creation time
+        const sessionCreationTime = new Date(
+          sessionData.session.created_at
+        ).getTime();
+        const lastKnownSessionTime = localStorage.getItem(
+          "adminLastSessionTime"
+        );
+
+        if (
+          !lastKnownSessionTime ||
+          sessionCreationTime > parseInt(lastKnownSessionTime)
+        ) {
+          // This is a new session (user just logged in)
+          localStorage.setItem("adminLastSessionTime", sessionCreationTime);
+
+          // Set active tab to dashboard for new login sessions
+          setActiveTab("dashboard");
+          setIsNewSession(true);
+        }
       } catch (error) {
         console.error("Error checking authentication:", error);
         navigate("/");
@@ -57,15 +82,27 @@ const AdminPage = () => {
 
   // Update localStorage when activeTab changes
   useEffect(() => {
-    localStorage.setItem("adminActiveTab", activeTab);
-  }, [activeTab]);
+    // Only update localStorage if we're not in a new session
+    // This ensures we don't override the dashboard tab selection for new logins
+    if (!isNewSession) {
+      localStorage.setItem("adminActiveTab", activeTab);
+    }
+  }, [activeTab, isNewSession]);
 
-  const handleLogout = async () => {
+  const handleLogout = () => {
+    setShowLogoutModal(true);
+  };
+
+  const confirmLogout = async () => {
     try {
+      // Clear the session timestamp when logging out
+      localStorage.removeItem("adminLastSessionTime");
       await supabase.auth.signOut();
       navigate("/");
     } catch (error) {
       console.error("Error signing out:", error);
+    } finally {
+      setShowLogoutModal(false);
     }
   };
 
@@ -96,6 +133,11 @@ const AdminPage = () => {
 
   return (
     <div className="min-h-screen bg-[#0F172A] text-gray-100">
+      <LogoutConfirmationModal
+        isOpen={showLogoutModal}
+        onClose={() => setShowLogoutModal(false)}
+        onConfirm={confirmLogout}
+      />
       <div className="flex">
         <aside
           className={`${
@@ -204,11 +246,6 @@ const AdminPage = () => {
             </div>
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-3">
-                <img
-                  src="https://public.readdy.ai/ai/img_res/dbc65b1baf35e9b494a1a4961b124427.jpg"
-                  alt="Profile"
-                  className="w-10 h-10 rounded-full"
-                />
                 <span>{user?.email || "Admin User"}</span>
               </div>
             </div>
