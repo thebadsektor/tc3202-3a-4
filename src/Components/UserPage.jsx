@@ -109,7 +109,7 @@ const UserPage = () => {
   const confirmLogout = async () => {
     try {
       await supabase.auth.signOut();
-      navigate("/"); // Navigate back to LoginPage.jsx
+      navigate("/login"); // Navigate back to LoginPage.jsx
     } catch (error) {
       console.error("Error logging out:", error);
       showNotification("Logout failed. Please try again.");
@@ -282,10 +282,10 @@ const UserPage = () => {
                 <i className="fas fa-user-circle text-2xl text-gray-300"></i>
               </div>
               {showProfileMenu && (
-                <div className="absolute right-0 top-full mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
+                <div className="absolute right-0 top-full mt-2 w-48 rounded-md shadow-lg bg-gray-800 ring-1 ring-gray-800 ring-opacity-5 z-50">
                   <div className="py-1">
                     <button
-                      className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+                      className="w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-gray-100 rounded-md hover:bg-gray-700 transition-colors duration-200 cursor-pointer"
                       onClick={() => {
                         setShowProfileMenu(false);
                       }}
@@ -293,7 +293,7 @@ const UserPage = () => {
                       User Profile
                     </button>
                     <button
-                      className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+                      className="w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-gray-100 rounded-md hover:bg-gray-700 transition-colors duration-200 cursor-pointer"
                       onClick={handleLogout}
                     >
                       Logout

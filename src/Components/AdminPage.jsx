@@ -98,7 +98,7 @@ const AdminPage = () => {
       // Clear the session timestamp when logging out
       localStorage.removeItem("adminLastSessionTime");
       await supabase.auth.signOut();
-      navigate("/");
+      navigate("/login");
     } catch (error) {
       console.error("Error signing out:", error);
     } finally {

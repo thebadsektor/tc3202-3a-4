@@ -75,7 +75,7 @@ const SignUpPage = () => {
   };
 
   const handleSignIn = () => {
-    navigate("/");
+    navigate("/login");
   };
 
   return (

@@ -10,3 +10,16 @@ input:-webkit-autofill:active {
   caret-color: white !important; /* Ensure cursor color matches */
   transition: background-color 5000s ease-in-out 0s; /* Add a long transition to delay the browser style */
 }
+
+@keyframes horizontal-bounce {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(5px);
+  }
+}
+
+.animate-horizontal-bounce {
+  animation: horizontal-bounce 1s infinite;
+}
