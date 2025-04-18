@@ -57,7 +57,7 @@ const ResetPasswordPage = () => {
       setSuccessMsg("Password has been updated successfully");
       // Redirect to login page after 2 seconds
       setTimeout(() => {
-        navigate("/");
+        navigate("/login");
       }, 2000);
     } catch (error) {
       console.error("Error updating password:", error.message);
