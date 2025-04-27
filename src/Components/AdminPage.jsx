@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../utils/supabaseClient";
+import { preventBackNavigation } from "../utils/navigationControl";
 import DashboardTab from "./DashboardTab";
 import ProductsTab from "./ProductsTab";
 import UsersTab from "./UsersTab";
@@ -19,6 +20,12 @@ const AdminPage = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    // Prevent back navigation
+    const cleanup = preventBackNavigation();
+    return cleanup;
+  }, []);
 
   useEffect(() => {
     // Check if the user is logged in and is an admin
@@ -81,6 +88,12 @@ const AdminPage = () => {
   };
 
   // Update localStorage when activeTab changes
+  useEffect(() => {
+    // Prevent back navigation
+    const cleanup = preventBackNavigation();
+    return cleanup;
+  }, []);
+
   useEffect(() => {
     // Only update localStorage if we're not in a new session
     // This ensures we don't override the dashboard tab selection for new logins

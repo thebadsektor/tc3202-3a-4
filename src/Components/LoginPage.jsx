@@ -7,10 +7,8 @@ const LoginPage = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
-  const [role, setRole] = useState("user");
   const [errorMsg, setErrorMsg] = useState("");
   const [loading, setLoading] = useState(false);
-  const [invalidRole, setInvalidRole] = useState(null);
   const [invalidFields, setInvalidFields] = useState({
     email: false,
     password: false,
@@ -39,12 +37,6 @@ const LoginPage = () => {
     navigate(path);
   };
 
-  const handleRoleChange = (selectedRole) => {
-    setRole(selectedRole);
-    setErrorMsg("");
-    setInvalidRole(null);
-  };
-
   const handleLogin = async () => {
     if (!email || !password) {
       setErrorMsg("Please fill in all fields");
@@ -67,7 +59,7 @@ const LoginPage = () => {
 
       if (error) throw error;
 
-      // Check user role from metadata
+      // Check user role from metadata and redirect accordingly
       const userRole = data.user?.user_metadata?.role || "user";
 
       // Store session if remember me is checked
@@ -75,28 +67,8 @@ const LoginPage = () => {
         localStorage.setItem("sb-auth-token", data.session?.access_token);
       }
 
-      // Check if selected role matches user's actual role
-      if (role === "admin" && userRole !== "admin") {
-        // User is trying to access admin but doesn't have admin role
-        setErrorMsg(
-          "Access Denied: You are not authorized to access this role."
-        );
-        setInvalidRole("admin");
-        return;
-      }
-
-      // Check if admin user is trying to access user page
-      if (role === "user" && userRole === "admin") {
-        // Admin user is trying to access user page
-        setErrorMsg(
-          "Access Denied: You are not authorized to access this role."
-        );
-        setInvalidRole("user");
-        return;
-      }
-
-      // Redirect based on role selection (only if authorized)
-      navigate(role === "admin" ? "/admin" : "/user");
+      // Redirect based on user's role in metadata
+      navigate(userRole === "admin" ? "/admin" : "/user");
     } catch (error) {
       console.error("Error logging in:", error.message);
       setErrorMsg(error.message || "Error logging in");
@@ -126,28 +98,6 @@ const LoginPage = () => {
           <p className="text-gray-400 mt-2">Sign in to your account</p>
         </div>
         <div className="space-y-6">
-          <div className="flex justify-center space-x-6">
-            <button
-              className={`px-6 py-2 rounded-lg whitespace-nowrap cursor-pointer ${
-                role === "user"
-                  ? "bg-[#4169E1] text-white"
-                  : "bg-[#2A303C] text-gray-400"
-              } ${invalidRole === "user" ? "border-2 border-red-500" : ""}`}
-              onClick={() => handleRoleChange("user")}
-            >
-              <i className="fas fa-user mr-2"></i> User
-            </button>
-            <button
-              className={`px-6 py-2 rounded-lg whitespace-nowrap cursor-pointer ${
-                role === "admin"
-                  ? "bg-[#4169E1] text-white"
-                  : "bg-[#2A303C] text-gray-400"
-              } ${invalidRole === "admin" ? "border-2 border-red-500" : ""}`}
-              onClick={() => handleRoleChange("admin")}
-            >
-              <i className="fas fa-user-shield mr-2"></i> Admin
-            </button>
-          </div>
           <div className="relative">
             <input
               type="email"

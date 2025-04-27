@@ -9,7 +9,8 @@ const SignUpPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
-  const [role, setRole] = useState("user");
+  // Default role is always 'user', no UI selection needed
+  const role = "user";
   const [loading, setLoading] = useState(false);
   const [invalidFields, setInvalidFields] = useState({
     email: false,
@@ -89,30 +90,6 @@ const SignUpPage = () => {
           />
           <h1 className="text-2xl font-bold text-white">Create Your Account</h1>
           <p className="text-gray-400 mt-2">Join IntellCor today</p>
-          <div className="flex justify-center space-x-6 mt-4">
-            <button
-              className={`px-6 py-2 rounded-lg whitespace-nowrap cursor-pointer ${
-                role === "user"
-                  ? "bg-[#4169E1] text-white"
-                  : "bg-[#2A303C] text-gray-400"
-              }`}
-              onClick={() => setRole("user")}
-            >
-              <i className="fas fa-user mr-2"></i>
-              User
-            </button>
-            <button
-              className={`px-6 py-2 rounded-lg whitespace-nowrap cursor-pointer ${
-                role === "admin"
-                  ? "bg-[#4169E1] text-white"
-                  : "bg-[#2A303C] text-gray-400"
-              }`}
-              onClick={() => setRole("admin")}
-            >
-              <i className="fas fa-user-shield mr-2"></i>
-              Admin
-            </button>
-          </div>
         </div>
         <div className="space-y-6">
           <div className="relative">

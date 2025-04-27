@@ -8,7 +8,7 @@ import sys
 # Add src directory to path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from products_recommender import FurnitureRecommender
+from src.products_recommender import FurnitureRecommender
 
 app = FastAPI()
 
