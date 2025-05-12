@@ -67,7 +67,7 @@ const UserModal = ({
             type="email"
             value={newUser.email || ""}
             onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
-            className="w-full px-4 py-2 bg-[#1A1F2A] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-4 py-2 bg-[#1A1F2A] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
             placeholder="Enter email address"
           />
         </div>
@@ -82,7 +82,7 @@ const UserModal = ({
                 onChange={(e) =>
                   setNewUser({ ...newUser, password: e.target.value })
                 }
-                className="w-full px-4 py-2 bg-[#1A1F2A] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 bg-[#1A1F2A] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
                 placeholder="Enter password"
               />
               <button
@@ -103,7 +103,7 @@ const UserModal = ({
           <select
             value={newUser.role || ""}
             onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}
-            className="w-full px-4 py-2 bg-[#1A1F2A] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-4 py-2 bg-[#1A1F2A] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 cursor-pointer"
           >
             <option value="" disabled>
               Select Role

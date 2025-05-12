@@ -2,10 +2,10 @@ import { ID, Query } from 'appwrite';
 import { databases, storage, bucketId } from './appwriteConfig';
 
 // Use environment variables for database and collection IDs
-const DATABASE_ID = import.meta.env.VITE_APPWRITE_DATABASE_ID || '67da95880020fbe64129';
-const PRODUCTS_COLLECTION_ID = import.meta.env.VITE_APPWRITE_PRODUCTS_COLLECTION_ID || '67da95ab0039adf29049';
-const CATEGORIES_COLLECTION_ID = import.meta.env.VITE_APPWRITE_CATEGORIES_COLLECTION_ID || '67da96cf00160a1d35f0';
-const STYLES_COLLECTION_ID = import.meta.env.VITE_APPWRITE_STYLES_COLLECTION_ID || '67da97d300202d3581d4';
+const DATABASE_ID = import.meta.env.VITE_APPWRITE_DATABASE_ID;
+const PRODUCTS_COLLECTION_ID = import.meta.env.VITE_APPWRITE_PRODUCTS_COLLECTION_ID;
+const CATEGORIES_COLLECTION_ID = import.meta.env.VITE_APPWRITE_CATEGORIES_COLLECTION_ID;
+const STYLES_COLLECTION_ID = import.meta.env.VITE_APPWRITE_STYLES_COLLECTION_ID;
 
 // Products CRUD operations
 export const getProducts = async () => {

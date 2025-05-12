@@ -175,6 +175,15 @@ const AdminPage = () => {
               Admin Panel
             </span>
           </div>
+          {!isCollapsed && (
+            <div 
+              className="absolute right-0 top-8 cursor-pointer text-gray-400 hover:text-white pr-2"
+              onClick={toggleSidebar}
+              title="Collapse Sidebar"
+            >
+              <i className="fas fa-chevron-left text-xl"></i>
+            </div>
+          )}
           <nav className="flex flex-col h-[calc(100vh-80px)] justify-between">
             <div className="space-y-2">
               <button
@@ -249,9 +258,6 @@ const AdminPage = () => {
         >
           <div className="flex justify-between items-center mb-8">
             <div className="flex items-center space-x-4">
-              <button className="lg:hidden text-2xl text-gray-400 hover:text-white mr-4">
-                <i className="fas fa-bars"></i>
-              </button>
               <img
                 src="https://public.readdy.ai/ai/img_res/d0fd0afc130dee20bcc9aa15b980e500.jpg"
                 alt="Store"

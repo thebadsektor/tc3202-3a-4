@@ -76,7 +76,7 @@ const ProductModal = ({
             id="imageUpload"
           />
           <div
-            className="w-full min-h-[200px] px-4 py-6 bg-[#1A1F2A] text-gray-400 rounded-lg border-2 border-dashed border-gray-600 cursor-pointer hover:border-[#4169E1] hover:bg-[#1E2330] transition-all duration-300 relative"
+            className="group w-full min-h-[200px] px-4 py-6 bg-[#1A1F2A] text-gray-400 rounded-lg border-2 border-dashed border-gray-600 cursor-pointer hover:border-blue-500 hover:bg-[#1E2330] transition-all duration-300 relative"
             onDragOver={(e) => {
               e.preventDefault();
               e.stopPropagation();
@@ -151,9 +151,9 @@ const ProductModal = ({
                 </div>
               ) : (
                 <div className="text-center">
-                  <i className="fas fa-cloud-upload-alt text-4xl mb-4"></i>
-                  <p className="text-lg mb-2">Drag and drop image here</p>
-                  <p className="text-sm text-gray-500">
+                  <i className="fas fa-cloud-upload-alt text-4xl mb-4 group-hover:text-blue-400"></i>
+                  <p className="text-lg mb-2 group-hover:text-blue-400">Drag and drop image here</p>
+                  <p className="text-sm text-gray-500 group-hover:text-blue-400">
                     or click to select file
                   </p>
                 </div>
@@ -168,14 +168,14 @@ const ProductModal = ({
           onChange={(e) =>
             setNewProduct({ ...newProduct, name: e.target.value })
           }
-          className="w-full px-4 py-2 bg-[#1A1F2A] text-white rounded-lg border-none"
+          className="w-full px-4 py-2 bg-[#1A1F2A] text-white rounded-lg border-none focus:outline-none focus:ring-2 focus:ring-blue-600"
         />
         <select
           value={newProduct.category || ""}
           onChange={(e) =>
             setNewProduct({ ...newProduct, category: e.target.value })
           }
-          className="w-full px-4 py-2 bg-[#1A1F2A] text-white rounded-lg border-none"
+          className="w-full px-4 py-2 bg-[#1A1F2A] text-white rounded-lg border-none focus:outline-none focus:ring-2 focus:ring-blue-600 cursor-pointer"
         >
           <option value="">Select Category</option>
           {categories.map((category) => (
@@ -189,7 +189,7 @@ const ProductModal = ({
           onChange={(e) =>
             setNewProduct({ ...newProduct, style: e.target.value })
           }
-          className="w-full px-4 py-2 bg-[#1A1F2A] text-white rounded-lg border-none"
+          className="w-full px-4 py-2 bg-[#1A1F2A] text-white rounded-lg border-none focus:outline-none focus:ring-2 focus:ring-blue-600 cursor-pointer"
         >
           <option value="">Select Style</option>
           {styles.map((style) => (
@@ -204,7 +204,7 @@ const ProductModal = ({
               setShowModal(false);
               setNewProduct({});
             }}
-            className="px-4 py-2 text-gray-400 hover:text-white !rounded-button cursor-pointer"
+            className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors cursor-pointer"
           >
             Cancel
           </button>
@@ -222,7 +222,7 @@ const ProductModal = ({
               }
               handleAddProduct();
             }}
-            className="px-4 py-2 bg-[#4169E1] text-white !rounded-button cursor-pointer"
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2 cursor-pointer"
           >
             {editingProduct ? "Update" : "Add"}
           </button>

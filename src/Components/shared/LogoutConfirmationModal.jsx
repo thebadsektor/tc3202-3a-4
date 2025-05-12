@@ -1,28 +1,51 @@
-import React from "react";
-import Modal from "./Modal";
+import React, { useEffect, useState } from "react";
 
-const LogoutConfirmationModal = ({ isOpen, onClose, onConfirm }) => {
+const Modal = ({ isOpen, onClose, title, children }) => {
+  const [isClosing, setIsClosing] = useState(false);
+  const [shouldRender, setShouldRender] = useState(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      setIsClosing(false);
+      setShouldRender(true);
+    } else if (!isClosing) {
+      setShouldRender(false);
+    }
+  }, [isOpen]);
+
+  const handleClose = () => {
+    setIsClosing(true);
+    setTimeout(() => {
+      onClose();
+      setIsClosing(false);
+    }, 200);
+  };
+
+  if (!shouldRender) return null;
+
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Confirm Logout">
-      <div className="space-y-4">
-        <p className="text-gray-300">Are you sure you want to logout?</p>
-        <div className="flex justify-end space-x-3 mt-6">
-          <button
-            onClick={onClose}
-            className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors cursor-pointer"
+    <div
+      className={`fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50 min-h-screen w-full transition-opacity duration-200 ${isClosing ? 'opacity-0' : 'opacity-100'}`}
+      style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+      onClick={handleClose}
+    >
+      <div 
+        className={`bg-[#232936] p-6 rounded-lg w-[400px] transition-all duration-200 ${isClosing ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-white text-xl font-semibold">{title}</h2>
+          <button 
+            onClick={handleClose} 
+            className="text-white hover:text-gray-300 transition-colors"
           >
-            Cancel
-          </button>
-          <button
-            onClick={onConfirm}
-            className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors cursor-pointer"
-          >
-            Logout
+            ✕
           </button>
         </div>
+        {children}
       </div>
-    </Modal>
+    </div>
   );
 };
 
-export default LogoutConfirmationModal;
+export default Modal;

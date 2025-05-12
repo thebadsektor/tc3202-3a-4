@@ -3,6 +3,7 @@ import TableHeader from "./shared/Table/TableHeader";
 import ProductTableRow from "./Products/ProductTableRow";
 import ProductModal from "./Products/ProductModal";
 import Modal from "./shared/Modal";
+import Toast from "./shared/Toast";
 import {
   createProduct,
   updateProduct,
@@ -23,6 +24,9 @@ const ProductsTable = ({ initialProducts, categories, styles }) => {
     return localStorage.getItem("productSortOption") || "newest";
   });
   const [showSortDropdown, setShowSortDropdown] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+  const [toastType, setToastType] = useState("success");
   const dropdownRef = useRef(null);
 
   // Close dropdown when clicking outside
@@ -39,11 +43,18 @@ const ProductsTable = ({ initialProducts, categories, styles }) => {
     };
   }, []);
 
+  const showNotification = (message, type = "success") => {
+    setToastMessage(message);
+    setToastType(type);
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 3000);
+  };
+
   const handleAddProduct = async () => {
     try {
       // Validate required fields
       if (!newProduct.name || !newProduct.category || !newProduct.style) {
-        alert("Please fill in all required fields (Name, Category, and Style)");
+        showNotification("Please fill in all required fields (Name, Category, and Style)", "error");
         return;
       }
 
@@ -64,7 +75,7 @@ const ProductsTable = ({ initialProducts, categories, styles }) => {
         );
 
       if (duplicateProduct || duplicateImage) {
-        alert("Unable to save Product. Product Name already exist!");
+        showNotification("Unable to save Product. Product Name already exist!", "error");
         return;
       }
 
@@ -97,10 +108,17 @@ const ProductsTable = ({ initialProducts, categories, styles }) => {
         setShowProductModal(false);
         setNewProduct({});
         setEditingProduct(null);
+
+        // Show success notification
+        if (editingProduct) {
+          showNotification("Product edited successfully");
+        } else {
+          showNotification("Product added successfully");
+        }
       }
     } catch (error) {
       console.error("Error saving product:", error);
-      alert("Failed to save product. Please check all fields and try again.");
+      showNotification("Failed to save product. Please check all fields and try again.", "error");
     }
   };
 
@@ -115,9 +133,10 @@ const ProductsTable = ({ initialProducts, categories, styles }) => {
       setProducts(products.filter((p) => p.id !== productToDelete.id));
       setShowDeleteConfirm(false);
       setProductToDelete(null);
+      showNotification("Product deleted successfully");
     } catch (error) {
       console.error("Error deleting product:", error);
-      // You could add error handling UI here if needed
+      showNotification("Failed to delete product. Please try again.", "error");
     }
   };
 
@@ -168,6 +187,11 @@ const ProductsTable = ({ initialProducts, categories, styles }) => {
 
   return (
     <>
+    <Toast 
+        showToast={showToast} 
+        toastMessage={toastMessage} 
+        toastType={toastType} 
+      />
       <div className="bg-[#232936] rounded-lg">
         <div className="p-6 flex justify-between items-center">
           <h2 className="text-white text-xl font-semibold">Products</h2>
@@ -177,7 +201,11 @@ const ProductsTable = ({ initialProducts, categories, styles }) => {
               <div className="relative" ref={dropdownRef}>
                 <button
                   onClick={() => setShowSortDropdown(!showSortDropdown)}
-                  className="p-2 bg-[#1A1F2A] text-white rounded-lg hover:bg-[#2A303D] transition-colors flex items-center gap-1 cursor-pointer"
+                  className={`p-2 text-white rounded-lg flex items-center gap-1 cursor-pointer transition-colors ${
+                    showSortDropdown
+                      ? "bg-[#2A303D]"  // Active color
+                      : "bg-[#1A1F2A] hover:bg-[#2A303D]"  // Inactive color
+                  }`}
                   title="Sort products"
                 >
                   <svg
@@ -249,7 +277,7 @@ const ProductsTable = ({ initialProducts, categories, styles }) => {
                   placeholder="Search products..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="px-4 py-2 bg-[#1A1F2A] text-white rounded-lg border-none w-64 focus:outline-none focus:ring-2 focus:ring-[#4169E1]"
+                  className="px-4 py-2 bg-[#1A1F2A] text-white rounded-lg border-none w-64 focus:outline-none focus:ring-2 focus:ring-blue-600"
                 />
                 <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400">
                   <svg
@@ -302,14 +330,30 @@ const ProductsTable = ({ initialProducts, categories, styles }) => {
                 ]}
               />
               <tbody>
-                {filteredProducts.map((product) => (
-                  <ProductTableRow
-                    key={product.id}
-                    product={product}
-                    onEdit={handleEditClick}
-                    onDelete={handleDeleteClick}
-                  />
-                ))}
+                {filteredProducts.length > 0 ? (
+                  filteredProducts.map((product) => (
+                    <ProductTableRow
+                      key={product.id}
+                      product={product}
+                      onEdit={handleEditClick}
+                      onDelete={handleDeleteClick}
+                    />
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="6" className="py-8">
+                      <div className="flex flex-col items-center justify-center text-gray-400">
+                        <img
+                          src="/no-results.png"
+                          alt="No Results"
+                          className="w-15 h-15 text-red-400"
+                        />
+                        <p className="text-lg font-bold mb-2">No Products Found</p>
+                        <p>Please try again with different keywords.</p>
+                      </div>
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>

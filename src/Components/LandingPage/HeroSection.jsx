@@ -25,7 +25,7 @@ const HeroSection = () => {
                     .scrollIntoView({ behavior: "smooth" })
                 }
                 variant="primary"
-                className="py-2 px-6 flex items-center group cursor-pointer"
+                className="py-2 px-6 flex items-center group cursor-pointer bg-blue-600 hover:bg-blue-700"
               >
                 Learn More
                 <span className="ml-2 group-hover:translate-x-1 transition-transform">

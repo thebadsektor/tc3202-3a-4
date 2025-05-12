@@ -5,6 +5,8 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
+import ScrollToTop from "./utils/ScrollToTop";
+import ConnectionHandler from "./Components/shared/ConnectionHandler";
 import UserPage from "./Components/UserPage";
 import AdminPage from "./Components/AdminPage";
 import LoginPage from "./Components/LoginPage";
@@ -12,6 +14,9 @@ import SignUpPage from "./Components/SignUpPage";
 import ForgotPassPage from "./Components/ForgotPassPage";
 import ResetPasswordPage from "./Components/ResetPasswordPage";
 import LandingPage from "./Components/LandingPage";
+import PrivacyPolicy from "./Components/PrivacyPolicy";
+import TermsOfService from "./Components/TermsOfService";
+import CookiePolicy from "./Components/CookiePolicy";
 import { supabase } from "./utils/supabaseClient";
 
 // Protected Route Component
@@ -70,6 +75,8 @@ const ProtectedRoute = ({ children, allowedRole }) => {
 function App() {
   return (
     <Router>
+      <ScrollToTop />
+      <ConnectionHandler />
       <Routes>
         {/* Public routes */}
         <Route path="/" element={<LandingPage />} />
@@ -77,6 +84,9 @@ function App() {
         <Route path="/signup" element={<SignUpPage />} />
         <Route path="/forgot-password" element={<ForgotPassPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/terms-of-service" element={<TermsOfService />} />
+        <Route path="/cookie-policy" element={<CookiePolicy />} />
 
         {/* Protected routes */}
         <Route

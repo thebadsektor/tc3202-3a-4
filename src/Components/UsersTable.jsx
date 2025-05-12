@@ -320,7 +320,7 @@ const UsersTable = () => {
               placeholder="Search users..."
               value={searchTerm}
               onChange={handleSearch}
-              className="px-4 py-2 bg-[#1A1F2A] text-white rounded-lg border-none w-64 focus:outline-none focus:ring-2 focus:ring-[#4169E1]"
+              className="px-4 py-2 bg-[#1A1F2A] text-white rounded-lg border-none w-64 focus:outline-none focus:ring-2 focus:ring-blue-600"
             />
             <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400">
               <i className="fas fa-search"></i>
@@ -362,13 +362,18 @@ const UsersTable = () => {
                 ))
               ) : (
                 <tr>
-                  <td
-                    colSpan="4"
-                    className="px-6 py-4 text-center text-gray-400"
-                  >
-                    No users found
-                  </td>
-                </tr>
+                    <td colSpan="6" className="py-8">
+                      <div className="flex flex-col items-center justify-center text-gray-400">
+                        <img
+                          src="/no-results.png"
+                          alt="No Results"
+                          className="w-15 h-15 text-red-400"
+                        />
+                        <p className="text-lg font-bold mb-2">No Users Found</p>
+                        <p>Please try again with different keywords.</p>
+                      </div>
+                    </td>
+                  </tr>
               )}
             </tbody>
           </table>

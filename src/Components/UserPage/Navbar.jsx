@@ -6,6 +6,7 @@ const Navbar = ({
   showProfileMenu,
   setShowProfileMenu,
   handleLogout,
+  profileMenuRef,
 }) => {
   return (
     <nav
@@ -16,12 +17,20 @@ const Navbar = ({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex items-center">
-            <img src="/intellcor.png" alt="Company Logo" className="h-15" />
+          <img 
+            src="/intellcor.png" 
+            alt="Company Logo" 
+            className="h-15 cursor-pointer" 
+            onClick={() => window.location.reload()} 
+          />
           </div>
           <div className="flex items-center relative">
             <div
+              ref={profileMenuRef}
               onClick={() => setShowProfileMenu(!showProfileMenu)}
-              className="flex items-center cursor-pointer px-4 py-2 rounded-md hover:bg-gray-700 transition-colors duration-200"
+              className={`flex items-center cursor-pointer px-4 py-2 rounded-md hover:bg-gray-700 transition-colors ${
+                showProfileMenu ? "bg-gray-700" : "bg-gray-800 hover:bg-gray-700"
+              }`}
             >
               <span className="text-gray-300 mr-2">
                 {user?.email || "user@example.com"}
@@ -31,14 +40,14 @@ const Navbar = ({
             {showProfileMenu && (
               <div className="absolute right-0 top-full mt-2 w-48 rounded-md shadow-lg bg-gray-800 ring-1 ring-gray-800 ring-opacity-5 z-50">
                 <div className="py-1">
-                  <button
+                  {/* <button
                     className="w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-gray-100 rounded-md hover:bg-gray-700 transition-colors duration-200 cursor-pointer"
                     onClick={() => {
                       setShowProfileMenu(false);
                     }}
                   >
-                    User Profile
-                  </button>
+                    Collections
+                  </button> */}
                   <button
                     className="w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-gray-100 rounded-md hover:bg-gray-700 transition-colors duration-200 cursor-pointer"
                     onClick={handleLogout}

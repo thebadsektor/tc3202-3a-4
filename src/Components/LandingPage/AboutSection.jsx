@@ -73,7 +73,7 @@ const AboutSection = () => {
             <div className="pt-4">
               <button
                 onClick={() => (window.location.href = "/login")}
-                className="bg-[#3B82F6] hover:bg-[#2563EB] text-lg px-8 py-3 rounded-md text-white font-medium inline-flex items-center cursor-pointer"
+                className="bg-blue-600 hover:bg-blue-700 text-lg px-8 py-3 rounded-md text-white font-medium inline-flex items-center cursor-pointer"
               >
                 Get Started
                 <span className="ml-2">

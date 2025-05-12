@@ -1,5 +1,6 @@
 // Footer.jsx - Footer component for the Landing Page
 import { Icons } from "./Icons";
+import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
@@ -8,24 +9,6 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mx-auto max-w-5xl justify-items-center text-center md:text-left">
           <div className="space-y-4">
             <div className="flex items-center justify-center md:justify-start">
-              <div className="mr-2">
-                <svg
-                  width="28"
-                  height="28"
-                  viewBox="0 0 32 32"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M10.5 4L4 9V23L10.5 28L26 28L26 4L10.5 4Z"
-                    stroke="#4285F4"
-                    strokeWidth="2"
-                    fill="none"
-                  />
-                  <path d="M17 16L21 16" stroke="#4285F4" strokeWidth="2" />
-                  <circle cx="14" cy="16" r="2" fill="#4285F4" />
-                </svg>
-              </div>
               <span className="text-xl font-bold bg-gradient-to-r from-[#4285F4] to-[#4285F4] bg-clip-text text-transparent">
                 IntelCor
               </span>
@@ -37,25 +20,33 @@ const Footer = () => {
             </p>
             <div className="flex space-x-4 justify-center md:justify-start">
               <a
-                href="#"
+                href="https://www.facebook.com/deanmartin.mabulay/"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="text-gray-400 hover:text-[#4285F4] transition-colors"
               >
                 <Icons.Facebook />
               </a>
               <a
-                href="#"
+                href="https://www.facebook.com/joyceann.cuala"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="text-gray-400 hover:text-[#4285F4] transition-colors"
               >
                 <Icons.Twitter />
               </a>
               <a
-                href="#"
+                href="https://www.facebook.com/dondon.esquivel.1"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="text-gray-400 hover:text-[#4285F4] transition-colors"
               >
                 <Icons.Instagram />
               </a>
               <a
-                href="#"
+                href="https://www.facebook.com/leorogel.oca"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="text-gray-400 hover:text-[#4285F4] transition-colors"
               >
                 <Icons.Linkedin />
@@ -67,16 +58,16 @@ const Footer = () => {
             <h3 className="font-semibold text-white mb-4">Features</h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <h className="text-gray-400">AI-Powered Design</h>
+                <span className="text-gray-400">AI-Powered Design</span>
               </li>
               <li>
-                <h className="text-gray-400">Room Visualization</h>
+                <span className="text-gray-400">Room Visualization</span>
               </li>
               <li>
-                <h className="text-gray-400">Style Recommendations</h>
+                <span className="text-gray-400">Style Recommendations</span>
               </li>
               <li>
-                <h className="text-gray-400">Furniture Selection</h>
+                <span className="text-gray-400">Furniture Selection</span>
               </li>
             </ul>
           </div>
@@ -85,28 +76,31 @@ const Footer = () => {
             <h3 className="font-semibold text-white mb-4">Legal</h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <a
-                  href="#"
+                <Link
+                  to="/privacy-policy#privacy-policy-top"
                   className="text-gray-400 hover:text-[#4285F4] transition-colors"
+                  onClick={() => window.scrollTo(0, 0)}
                 >
                   Privacy Policy
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="#"
+                <Link
+                  to="/terms-of-service#terms-of-service-top"
                   className="text-gray-400 hover:text-[#4285F4] transition-colors"
+                  onClick={() => window.scrollTo(0, 0)}
                 >
                   Terms of Service
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="#"
+                <Link
+                  to="/cookie-policy#cookie-policy-top"
                   className="text-gray-400 hover:text-[#4285F4] transition-colors"
+                  onClick={() => window.scrollTo(0, 0)}
                 >
                   Cookie Policy
-                </a>
+                </Link>
               </li>
             </ul>
           </div>

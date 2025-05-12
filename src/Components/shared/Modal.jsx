@@ -1,19 +1,35 @@
 import React from "react";
+import Modal from "./Modal";
 
-const Modal = ({ isOpen, onClose, title, children }) => {
-  if (!isOpen) return null;
+const LogoutConfirmationModal = ({ isOpen, onClose, onConfirm }) => {
+  const handleLogout = () => {
+    // Close modal with animation first
+    onClose();
+    // Wait for animation to complete before executing logout
+    setTimeout(onConfirm, 200);
+  };
 
   return (
-    <div
-      className="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50 min-h-screen w-full"
-      style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
-    >
-      <div className="bg-[#232936] p-6 rounded-lg w-[400px]">
-        <h2 className="text-white text-xl font-semibold mb-4">{title}</h2>
-        {children}
+    <Modal isOpen={isOpen} onClose={onClose} title="Confirm Logout">
+      <div className="space-y-4">
+        <p className="text-gray-300">Are you sure you want to logout?</p>
+        <div className="flex justify-end space-x-3 mt-6">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors cursor-pointer"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleLogout}
+            className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors cursor-pointer"
+          >
+            Logout
+          </button>
+        </div>
       </div>
-    </div>
+    </Modal>
   );
 };
 
-export default Modal;
+export default LogoutConfirmationModal;

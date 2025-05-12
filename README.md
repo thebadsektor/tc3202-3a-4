@@ -1,6 +1,6 @@
 # TC-3202 [IntelCor]
 
-![Project Banner](https://via.placeholder.com/1200x400.png?text=Project+Banner+Placeholder)
+![Project Banner](https://github.com/user-attachments/assets/7eb38b29-aded-479a-b923-1d362f12e843)
 
 ## Table of Contents
 
@@ -21,26 +21,17 @@
 
 ## Introduction
 
-IntelCor is a web-based, AI-powered room design assistant that streamlines interior design planning by providing intelligent, automated recommendations tailored to a user's specific room layout and design preferences. The system addresses the challenge of overwhelming design choices by delivering optimized product suggestions and accurate quantity estimates.
+IntelCor is a web-based, AI-powered room design assistant that streamlines interior design planning by providing intelligent, automated recommendations tailored to a user's specific room layout and design preferences. The system addresses the challenge of overwhelming design choices by delivering optimized product suggestions and accurate quantity estimates. Users input necessary details, and the system utilizes a machine learning model to select suitable products from a curated dataset.
 
 ## Project Overview
 
-IntellCor was developed in response to the difficulties users face when trying to choose the most appropriate design elements for their rooms due to the overwhelming amount of options. Targeted towards homeowners, interior designers, and retailers, the system automatically recommends the best-fitting products and estimates the required quantity based on a 2D floor plan and user inputs.
-
-Real-world applications include home renovation planning, professional interior design support, and enhanced retail experiences for hardware or furniture stores through AI integration.
+IntelCor was developed in response to the difficulties users face when trying to choose the most appropriate design elements for their rooms due to the overwhelming amount of options. Targeted towards homeowners, interior designers, and retailers, the system automatically recommends the best-fitting products and estimates the required quantity based on a 2D floor plan and user inputs. Real-world applications include home renovation planning, professional interior design support, and enhanced retail experiences for hardware or furniture stores through AI integration.
 
 ## Objectives
 
-**General Objective:**
-
-- Develop IntellCor, an AI-powered room design assistant that provides optimized product recommendations based on user inputs and room specifications.
-
-**Specific Objectives:**
-
-- Create a user-friendly interface for uploading floor plans and entering room details.
-- Implement machine learning for product selection and quantity estimation.
-- Use FastAPI to manage APIs and process data efficiently.
-- Deploy the app using a scalable cloud service suitable for beginners.
+- Develop an AI-powered assistant to address the challenge of selecting interior design elements.
+- Implement features for AI-driven personalized product design recommendations.
+- Test and validate the system's performance, accuracy, efficiency, and usability.
 
 ## Features
 
@@ -51,10 +42,11 @@ Real-world applications include home renovation planning, professional interior 
 
 ## Technologies Used
 
-- **Programming Languages:** Python, JavaScript, HTML, CSS
+- **Programming Languages:** Python, JavaScript
 - **Frameworks/Libraries:** React.js, FastAPI, TensorFlow/Scikit-learn
-- **Databases:** Supabase and Appwrite
-- **Other Tools:** Git, Render or Heroku (for deployment)
+- **Databases:** Appwrite
+- **Authentication:** Supabase
+- **Other Tools:** Git, Visual Studio Code
 
 ## Setup and Installation
 
@@ -62,47 +54,47 @@ Step-by-step instructions for setting up the project locally.
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/your-repo-url.git
+   git clone https://github.com/thebadsektor/tc3202-3a-4.git
    ```
 2. **Install dependencies:**
    - If using `npm`:
    ```bash
-   git clone https://github.com/your-repo-url.git
+   npm install
    ```
    - If using `pip` (for Python projects):
    ```bash
-   git clone https://github.com/your-repo-url.git
+   python -m venv .venv
+   source venv/Scripts/activate
+   pip install -r requirements.txt
    ```
 3. **Configure environment variables (if any)**: Provide instructions for setting up .env files or any other required configurations.
    ```bash
-   git clone https://github.com/your-repo-url.git
+   source venv/Scripts/activate
    ```
 4. **Run the project:**
    - For web projects:
    ```bash
-   npm start
+   npm run dev
    ```
-   - IFor backend services:
+   - For backend services:
    ```bash
-   python app.py
+   cd src/
+   uvicorn main:app --reload
    ```
 
 **Note:** If your project has external depencies like XAMPP, MySQL, special SDK, or other environemnt setup, create another section for it.
 
 ## Usage Instructions
 
-Provide detailed instructions on how to use the project after setup:
+When the Landing Page is loaded, the user will be greeted with a clean and intuitive interface. The landing page provides an overview of the project, its purpose, and the features it offers. Users can easily navigate to the main system by clicking the login or sign up buttons.
 
-- How to access the application.
-- Example commands or API calls (if applicable).
-- Databases: [e.g., MySQL, MongoDB, etc.]
-- Screenshots or GIFs showcasing key functionalities (optional).
+![Image](https://github.com/user-attachments/assets/d11e7575-b02a-4126-aaa8-f0eee0c3ecd5)
 
-![UI Placeholder](https://via.placeholder.com/1200x700.png?text=UI+Placeholder)
+Upon successful login or sign up, the user will be redirected to the main system. The main system provides a user-friendly interface for interacting with the system. Users can input their room details, such as size, and the system will provide personalized product recommendations based on their preferences.
 
-Another Screenshot
+![Image](https://github.com/user-attachments/assets/1d26f12c-ac34-4220-a352-7fb741729d04)
 
-![UI Placeholder](https://via.placeholder.com/1200x700.png?text=UI+Placeholder)
+After all fields are filled, the user can click the "Get Recommendations" button to receive personalized product recommendations based on their input.
 
 ## Project Structure
 
@@ -129,10 +121,10 @@ Explain the structure of the project directory. Example:
 
 List all the team members involved in the project. Include their roles and responsibilities:
 
-- **Dean Martin M. Mabulay:** Lead Developer, Full-Stack Developer, Machine Learning Developer
-- **Joyce Ann v. Cuala:** UI/UX Designer, Documentation
+- **Dean Martin M. Mabulay:** Full-Stack Lead Developer, Machine Learning Developer
+- **Joyce Ann v. Cuala:** UI/UX Designer, Documentarian
 - **Dondon R. Esquivel:** Backend Developer, Machine Learning Specialist
-- **Leorogel D. Oca:** Backend Developer, Documentation
+- **Leorogel D. Oca:** Backend Developer, Documentarian
 
 ## Project Timeline
 
@@ -141,34 +133,37 @@ Outline the project timeline, including milestones or deliverables. Example:
 - **Week 1-2 (Feb 3)**: Concept Paper Proposal
 - **Week 3-4 (Feb 25)**: Consultation
 - **Week 5-6 (March 10)**: Plan user journey and refinement.
-- **Week 7-8 ()**: Research
-- **Week 9-10**: Repository Preperation & Research
-  - Related Repositories
+- **Week 7 (March 12)**: Research
+- **Week 8 (March 18)**: Repository Preperation & Research
+- **Week 9-11 (March 25)**: End-to-End Web App Development and Machine Learning Integration
+- **Week 13-14 (April 14)**: Initial Project Presentation (Replacement for Initial Defense)
+- **Week 15-17 (April 24)**: Front-end Development, Fine-tuning, and Documentation
+- **Week 18-20 (May 13)**: Final Project Presentation
 
 ## Changelog
 
-### [Version 1.0.0] - 2024-09-07
+### [Version 1.0.0] - 2025-04-13
 
 - Initial release of the project.
-- Added basic functionality for [Feature 1], [Feature 2], and [Feature 3].
+- Added basic functionality for product recommendations.
+- Implemented machine learning model for product selection.
 
-### [Version 1.1.0] - 2024-09-14
+### [Version 1.1.0] - 2025-05-08
 
-- Improved user interface for [Feature 1].
-- Fixed bugs related to [Feature 2].
+- Improved user interface for Laanding Page.
+- Enhanced floor plan analysis for product suggestions.
 - Updated project documentation with setup instructions.
 
-### [Version 1.2.0] - 2024-09-21
+### [Version 1.2.0] - 2025-05-12
 
-- Added new functionality for [Feature 4].
-- Refactored codebase for better performance.
-- Added unit tests for [Feature 3] and [Feature 4].
+- Added Gemini 2.0 Flash API for Products Quantity and Approxiamate Size Recommendation.
+- Added front-end elements to improve UI/UX consistency.
 
 ## Acknowledgments
 
-Acknowledge any resources, mentors, or external tools that helped in completing the project.
+We are grateful for the guidance of our professors, Mr. Gerald Villaran, Ms. Mary Grace Guillermo, Mr. James Geuvarra, and Ms. Joville Avila. We also acknowledge obtaining datasets from various online platforms, including IKEA andAmazon, which were used for this project.
 
-This project was built from [Original Project Name](https://github.com/username/original-repo), created by [Original Author's Name]. You can view the original repository [here](https://github.com/username/original-repo).
+This project was built from [Original Project Name](https://github.com/username/original-repo), created by [Contributors](#contributors). You can view the original repository [here](https://github.com/username/original-repo).
 
 ## License
 

@@ -7,6 +7,7 @@ const Recommendations = ({
   calculatedSize,
   roomSize,
   calculateProductQuantity,
+  calculateProductSize,
 }) => {
   if (recommendations.length === 0) return null;
 
@@ -45,6 +46,9 @@ const Recommendations = ({
               </h4>
               <p className="text-gray-400 text-sm mb-2">
                 Quantity: {calculateProductQuantity(roomSize, product.name)} pcs
+              </p>
+              <p className="text-gray-400 text-sm mb-2">
+                Approx. Size: {calculateProductSize(roomSize, product.name)}
               </p>
             </div>
           </div>

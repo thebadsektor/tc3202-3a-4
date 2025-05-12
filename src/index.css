@@ -23,3 +23,7 @@ input:-webkit-autofill:active {
 .animate-horizontal-bounce {
   animation: horizontal-bounce 1s infinite;
 }
+
+body {
+  @apply bg-[#1A1F2A] text-gray-400;
+}

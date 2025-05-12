@@ -21,13 +21,14 @@ from appwrite.services.storage import Storage
 from appwrite.id import ID
 from appwrite.query import Query
 
-# Appwrite configuration
-ENDPOINT = 'https://cloud.appwrite.io/v1'
-PROJECT_ID = '67da93a8003a50004c86'
-DATABASE_ID = '67da95880020fbe64129'
-PRODUCTS_COLLECTION_ID = '67da95ab0039adf29049'
-BUCKET_ID = '67da9823002456d7c1a2'
-API_KEY = 'standard_b51564fda1e74168a1c843ae84eb92ff7dacfc4e78cb619b269fbd0051cceeb7d24ad1a16b303a42a5a062f29deea6b8530b6792f5f3b715f23e3a5d5bb5ba4cd7cef8afe15255f40c710c995139a060e05eff3e61928d89abc35fa56112e94c97b7ff1ee156046a1267a9f74a24bae62414d94dc12fe4fe6f792b1aafeedbc8'
+# Appwrite configuration - using environment variables
+import os
+ENDPOINT = os.getenv('VITE_APPWRITE_ENDPOINT')
+PROJECT_ID = os.getenv('VITE_APPWRITE_PROJECT_ID')
+DATABASE_ID = os.getenv('VITE_APPWRITE_DATABASE_ID')
+PRODUCTS_COLLECTION_ID = os.getenv('VITE_APPWRITE_PRODUCTS_COLLECTION_ID')
+BUCKET_ID = os.getenv('VITE_APPWRITE_BUCKET_ID')
+API_KEY = os.getenv('VITE_APPWRITE_API_KEY')
 
 class FurnitureRecommender:
     def __init__(self, embedding_dim=64, n_neighbors=10):

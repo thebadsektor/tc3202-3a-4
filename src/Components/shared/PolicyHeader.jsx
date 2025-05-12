@@ -1,9 +1,10 @@
-// Header.jsx - Header component for the Landing Page
+// PolicyHeader.jsx - Modified Header component for Policy pages
 import { useState, useEffect } from "react";
-import { Icons } from "./Icons";
+import { Link } from "react-router-dom";
+import { Icons } from "../LandingPage/Icons";
 import { supabase } from "../../utils/supabaseClient";
 
-const Header = ({ handleLogin, handleSignUp }) => {
+const PolicyHeader = ({ handleLogin, handleSignUp }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -40,24 +41,24 @@ const Header = ({ handleLogin, handleSignUp }) => {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
-            <a
-              href="#"
+            <Link
+              to="/"
               className="text-gray-300 hover:text-white transition-colors"
             >
               Home
-            </a>
-            <a
-              href="#styles"
+            </Link>
+            <Link
+              to="/#styles"
               className="text-gray-300 hover:text-white transition-colors"
             >
               Styles
-            </a>
-            <a
-              href="#about"
+            </Link>
+            <Link
+              to="/#about"
               className="text-gray-300 hover:text-white transition-colors"
             >
               About
-            </a>
+            </Link>
             <div className="flex space-x-4">
               {isLoggedIn ? (
                 <button
@@ -123,24 +124,24 @@ const Header = ({ handleLogin, handleSignUp }) => {
         {isMenuOpen && (
           <div className="md:hidden mt-4">
             <nav className="flex flex-col space-y-4 py-4">
-              <a
-                href="#"
+              <Link
+                to="/"
                 className="text-gray-300 hover:text-white transition-colors"
               >
                 Home
-              </a>
-              <a
-                href="#styles"
+              </Link>
+              <Link
+                to="/#styles"
                 className="text-gray-300 hover:text-white transition-colors"
               >
                 Design Styles
-              </a>
-              <a
-                href="#about"
+              </Link>
+              <Link
+                to="/#about"
                 className="text-gray-300 hover:text-white transition-colors"
               >
                 About
-              </a>
+              </Link>
               <div className="flex flex-col space-y-3 pt-3">
                 {isLoggedIn ? (
                   <button
@@ -198,4 +199,4 @@ const Header = ({ handleLogin, handleSignUp }) => {
   );
 };
 
-export default Header;
+export default PolicyHeader;
