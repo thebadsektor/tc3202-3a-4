@@ -253,4 +253,4 @@ This project was built from [Original Project Name](https://github.com/username/
 
 ## License
 
-This project uses the MIT License. Refer to the LICENSE file for more details.
+This project uses the MIT License. Refer to the [LICENSE](https://github.com/thebadsektor/tc3202-3a-4/blob/main/LICENSE) file for more details.
