@@ -249,7 +249,7 @@ Outline the project timeline, including milestones or deliverables. Example:
 
 We are grateful for the guidance of our professors, Mr. Gerald Villaran, Ms. Mary Grace Guillermo, Mr. James Geuvarra, and Ms. Joville Avila. We also acknowledge obtaining datasets from various online platforms, including IKEA andAmazon, which were used for this project.
 
-This project was built from [Original Project Name](https://github.com/username/original-repo), created by [Contributors](#contributors). You can view the original repository [here]([https://github.com/thebadsektor/tc3202-3a-4.git]).
+This project was built from [Original Project Name](https://github.com/username/original-repo), created by [Contributors](#contributors). You can view the original repository [here](https://github.com/thebadsektor/tc3202-3a-4).
 
 ## License
 
