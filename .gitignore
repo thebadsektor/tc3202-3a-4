@@ -62,4 +62,4 @@ requirements.txt
 .ipynb_checkpoints/
 
 # VSCode Python settings
-.vscode/settings.json
+.vscode/

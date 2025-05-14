@@ -167,4 +167,4 @@ This project was built from [Original Project Name](https://github.com/username/
 
 ## License
 
-This project uses the MIT License. Refer to the LICENSE file for more details.
+As of 05/14/2025, this project is no longer licensed under the MIT License. All rights are reserved.
