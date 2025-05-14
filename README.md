@@ -253,8 +253,4 @@ This project was built from [Original Project Name](https://github.com/username/
 
 ## License
 
-<<<<<<< HEAD
 As of 05/14/2025, this project is no longer licensed under the MIT License. All rights are reserved.
-=======
-This project uses the MIT License. Refer to the [LICENSE](https://github.com/thebadsektor/tc3202-3a-4/blob/main/LICENSE) file for more details.
->>>>>>> 90c79b72d9e8c3ae351d37bdfa93b9fcf41555ab
