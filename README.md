@@ -102,19 +102,105 @@ Explain the structure of the project directory. Example:
 
 ```bash
 .
-├── 📂 src/
-│   ├── 📂 components/
-│   │   ├── <component>
-│   │   ├── <anotherComponent>
-│   │   └── ...
-│   ├── 📂 pages/
-│   └── 📂 utils/
-├── 📂 public/
-├── 📂 tests/
-├── 📂 notebooks/
-├── .env.example
+├── .gitignore
+├── .vscode/
+│   └── extensions.json
+├── eslint.config.js
+├── index.html
+├── package-lock.json
 ├── package.json
-└── README.md
+├── public/
+│   ├── intelcor_favicon.png
+│   ├── intellcor.png
+│   ├── login_bg.png
+│   ├── no-results.png
+│   └── vite.svg
+├── README.md
+├── src/
+│   ├── App.jsx
+│   ├── assets/
+│   │   └── react.svg
+│   ├── Components/
+│   │   ├── AdminPage.jsx
+│   │   ├── Categories/
+│   │   │   ├── CategoryModal.jsx
+│   │   │   └── CategoryTableRow.jsx
+│   │   ├── CategoriesTable.jsx
+│   │   ├── CookiePolicy.jsx
+│   │   ├── DashboardTab.jsx
+│   │   ├── ForgotPassPage.jsx
+│   │   ├── LandingPage/
+│   │   │   ├── AboutSection.jsx
+│   │   │   ├── Button.jsx
+│   │   │   ├── DemoSection.jsx
+│   │   │   ├── Footer.jsx
+│   │   │   ├── Header.jsx
+│   │   │   ├── HeroSection.jsx
+│   │   │   ├── Icons.jsx
+│   │   │   └── StylesSection.jsx
+│   │   ├── LandingPage.jsx
+│   │   ├── LoginPage.jsx
+│   │   ├── PrivacyPolicy.jsx
+│   │   ├── Products/
+│   │   │   ├── ProductModal.jsx
+│   │   │   └── ProductTableRow.jsx
+│   │   ├── ProductsTab.jsx
+│   │   ├── ProductsTable.jsx
+│   │   ├── ResetPasswordPage.jsx
+│   │   ├── shared/
+│   │   │   ├── ConnectionHandler.jsx
+│   │   │   ├── DashboardSkeletonLoading.jsx
+│   │   │   ├── LogoutConfirmationModal.jsx
+│   │   │   ├── Modal.jsx
+│   │   │   ├── PolicyHeader.jsx
+│   │   │   ├── SkeletonLoading.jsx
+│   │   │   ├── Table/
+│   │   │   │   ├── TableHeader.jsx
+│   │   │   │   └── TableRow.jsx
+│   │   │   └── Toast.jsx
+│   │   ├── SignUpPage.jsx
+│   │   ├── Styles/
+│   │   │   ├── StyleModal.jsx
+│   │   │   └── StyleTableRow.jsx
+│   │   ├── StylesTable.jsx
+│   │   ├── TermsOfService.jsx
+│   │   ├── UserPage/
+│   │   │   ├── DesignForm.jsx
+│   │   │   ├── HeroSection.jsx
+│   │   │   ├── Navbar.jsx
+│   │   │   ├── Recommendations.jsx
+│   │   │   ├── StylesCarousel.jsx
+│   │   │   └── Toast.jsx
+│   │   ├── UserPage.jsx
+│   │   ├── Users/
+│   │   │   ├── UserModal.jsx
+│   │   │   └── UsersTableRow.jsx
+│   │   ├── UsersTab.jsx
+│   │   └── UsersTable.jsx
+│   ├── floorplan_classifier.py
+│   ├── index.css
+│   ├── main.jsx
+│   ├── main.py
+│   ├── models/
+│   │   ├── attrs/
+│   │   │   ├── dataframe.joblib
+│   │   │   ├── encoder.joblib
+│   │   │   ├── scaler.joblib
+│   │   │   └── vectorizer.joblib
+│   │   ├── furniture_recommender.h5
+│   │   ├── keras_model.h5
+│   │   └── labels.txt
+│   ├── products_recommender.py
+│   └── utils/
+│       ├── appwriteConfig.js
+│       ├── appwriteService.js
+│       ├── connectionHandler.js
+│       ├── floorPlanAnalyzer.js
+│       ├── navigationControl.js
+│       ├── ScrollToTop.jsx
+│       └── supabaseClient.js
+├── tailwind.config.js
+└── vite.config.js
 ```
 
 ## Contributors
@@ -163,8 +249,12 @@ Outline the project timeline, including milestones or deliverables. Example:
 
 We are grateful for the guidance of our professors, Mr. Gerald Villaran, Ms. Mary Grace Guillermo, Mr. James Geuvarra, and Ms. Joville Avila. We also acknowledge obtaining datasets from various online platforms, including IKEA andAmazon, which were used for this project.
 
-This project was built from [Original Project Name](https://github.com/username/original-repo), created by [Contributors](#contributors). You can view the original repository [here](https://github.com/username/original-repo).
+This project was built from [Original Project Name](https://github.com/username/original-repo), created by [Contributors](#contributors). You can view the original repository [here](https://github.com/thebadsektor/tc3202-3a-4).
 
 ## License
 
+<<<<<<< HEAD
 As of 05/14/2025, this project is no longer licensed under the MIT License. All rights are reserved.
+=======
+This project uses the MIT License. Refer to the [LICENSE](https://github.com/thebadsektor/tc3202-3a-4/blob/main/LICENSE) file for more details.
+>>>>>>> 90c79b72d9e8c3ae351d37bdfa93b9fcf41555ab
